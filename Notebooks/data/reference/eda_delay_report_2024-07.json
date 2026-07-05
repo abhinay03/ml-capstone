@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "notebook": "05_Exploratory_Data_Analysis",
+    "section": "Section 1",
+    "created_at_utc": "2026-07-05T14:40:58.859869+00:00",
+    "target_month": "2024-07",
+    "source_parquet": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\ice_weather_merged_2024-07.parquet",
+    "analysis_subset": "mergeable + weather-matched rows"
+  },
+  "dataset_overview": {
+    "total_rows": 146389,
+    "mergeable_rows": 132268,
+    "analysis_rows": 132268,
+    "unique_stations": 95,
+    "unique_trains": 804,
+    "columns": 33
+  },
+  "delay_stats": {
+    "count": 132268,
+    "mean": 10.57,
+    "median": 4.0,
+    "std": 17.56,
+    "min": -17,
+    "max": 298,
+    "percentile_25": 1.0,
+    "percentile_75": 13.0,
+    "percentile_90": 30.0,
+    "percentile_95": 44.64999999999418,
+    "percentile_99": 84.0,
+    "early_arrivals_lt_0": 2602,
+    "on_time_eq_0": 25818,
+    "late_gt_0": 103848,
+    "late_gte_threshold": 55972
+  },
+  "class_balance": {
+    "threshold_minutes": 6,
+    "on_time_count": 76296,
+    "delayed_count": 55972,
+    "on_time_pct": 57.68,
+    "delayed_pct": 42.32,
+    "imbalance_ratio": 1.36
+  },
+  "threshold_justification": {
+    "threshold_minutes": 6,
+    "source": "6 minutes aligns with Deutsche Bahn significant-delay reporting. Final value validated in Notebook 05 EDA.",
+    "recommendation": "Use class_weight='balanced' or F1/ROC-AUC for modeling given 42.32% positive class"
+  },
+  "figures": {
+    "delay_histogram": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_delay_histogram_2024-07.png",
+    "class_balance": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_class_balance_2024-07.png"
+  }
+}

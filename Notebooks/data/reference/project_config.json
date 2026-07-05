@@ -1,0 +1,178 @@
+{
+  "project": {
+    "title": "ICE Train Delay Prediction Using Railway Operational Data and Historical Weather Data",
+    "author": "Your Name",
+    "institution": "Your University",
+    "notebook": "01_Project_Definition_and_Data_Understanding",
+    "section": "Section 1",
+    "created_at_utc": "2026-07-05T11:23:59.580815+00:00"
+  },
+  "scope": {
+    "train_type_filter": "ICE",
+    "observation_unit": "one train stop at one station (one row)",
+    "exclude_from_git": "full raw Deutsche Bahn dataset (54.8 GB)"
+  },
+  "ml_tasks": {
+    "classification": {
+      "question": "Will this ICE train stop be delayed?",
+      "target": "is_delayed",
+      "target_source": "derived from delay_in_min in Notebook 06"
+    },
+    "regression": {
+      "question": "How many minutes late will this ICE train stop be?",
+      "target": "delay_in_min",
+      "target_source": "column in Deutsche Bahn dataset"
+    }
+  },
+  "data_sources": {
+    "deutsche_bahn": {
+      "hf_dataset_id": "piebro/deutsche-bahn-data",
+      "hf_url": "https://huggingface.co/datasets/piebro/deutsche-bahn-data",
+      "monthly_parquet_pattern": "monthly_processed_data/data-{year_month}.parquet",
+      "approx_rows": 187311724,
+      "approx_size_gb": 54.8,
+      "license": "CC BY 4.0 (Deutsche Bahn attribution required)"
+    },
+    "open_meteo": {
+      "archive_url": "https://archive-api.open-meteo.com/v1/archive",
+      "docs_url": "https://open-meteo.com/en/docs/historical-weather-api",
+      "required_params": [
+        "latitude",
+        "longitude",
+        "start_date",
+        "end_date",
+        "hourly"
+      ],
+      "candidate_hourly_variables": [
+        "temperature_2m",
+        "precipitation",
+        "rain",
+        "snowfall",
+        "windspeed_10m",
+        "windgusts_10m",
+        "weather_code",
+        "visibility"
+      ]
+    }
+  },
+  "db_verified_columns": [
+    {
+      "name": "station_name",
+      "dtype": "string",
+      "role": "station label (nullable)"
+    },
+    {
+      "name": "xml_station_name",
+      "dtype": "string",
+      "role": "API/XML station name"
+    },
+    {
+      "name": "eva",
+      "dtype": "string",
+      "role": "EVA station ID — geocoding key"
+    },
+    {
+      "name": "train_number",
+      "dtype": "string",
+      "role": "train service number"
+    },
+    {
+      "name": "line_number",
+      "dtype": "string",
+      "role": "line ID (nullable)"
+    },
+    {
+      "name": "final_destination_station",
+      "dtype": "string",
+      "role": "route endpoint"
+    },
+    {
+      "name": "delay_in_min",
+      "dtype": "int32",
+      "role": "regression target"
+    },
+    {
+      "name": "time",
+      "dtype": "timestamp",
+      "role": "record reference time"
+    },
+    {
+      "name": "is_canceled",
+      "dtype": "bool",
+      "role": "cancellation flag"
+    },
+    {
+      "name": "train_type",
+      "dtype": "string",
+      "role": "filter: ICE only"
+    },
+    {
+      "name": "train_line_ride_id",
+      "dtype": "string",
+      "role": "unique ride ID"
+    },
+    {
+      "name": "train_line_station_num",
+      "dtype": "int32",
+      "role": "stop order on route"
+    },
+    {
+      "name": "arrival_planned_time",
+      "dtype": "timestamp",
+      "role": "scheduled arrival"
+    },
+    {
+      "name": "arrival_change_time",
+      "dtype": "timestamp",
+      "role": "actual/revised arrival"
+    },
+    {
+      "name": "departure_planned_time",
+      "dtype": "timestamp",
+      "role": "scheduled departure"
+    },
+    {
+      "name": "departure_change_time",
+      "dtype": "timestamp",
+      "role": "actual/revised departure"
+    },
+    {
+      "name": "id",
+      "dtype": "string",
+      "role": "unique row ID"
+    }
+  ],
+  "db_missing_columns": [
+    {
+      "name": "latitude",
+      "solution": "geocode eva/xml_station_name in Notebook 04"
+    },
+    {
+      "name": "longitude",
+      "solution": "geocode eva/xml_station_name in Notebook 04"
+    }
+  ],
+  "paths": {
+    "project_root": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks",
+    "data_dir": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data",
+    "processed_dir": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed",
+    "reference_dir": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference",
+    "config_path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\project_config.json"
+  },
+  "notebook_roadmap": [
+    "01 — Project Definition & Data Understanding",
+    "02 — Data Acquisition & Initial Inspection",
+    "03 — Data Cleaning & Standardization",
+    "04 — Data Integration (Merge Deutsche Bahn + Weather)",
+    "05 — Exploratory Data Analysis",
+    "06 — Feature Engineering",
+    "07 — Baseline Machine Learning Models",
+    "08 — Advanced Machine Learning Models",
+    "09 — Model Evaluation & Hyperparameter Tuning",
+    "10 — Final Prediction Pipeline & Conclusion"
+  ],
+  "reproducibility": {
+    "rule": "Each notebook is self-contained; load shared config and data from disk.",
+    "config_file": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\project_config.json"
+  }
+}

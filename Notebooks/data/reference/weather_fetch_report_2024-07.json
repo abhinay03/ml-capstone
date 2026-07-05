@@ -1,0 +1,715 @@
+{
+  "metadata": {
+    "notebook": "04_Data_Integration",
+    "section": "Section 2",
+    "created_at_utc": "2026-07-05T14:30:29.363059+00:00",
+    "target_month": "2024-07",
+    "api_url": "https://archive-api.open-meteo.com/v1/archive",
+    "date_range": {
+      "start": "2024-07-01",
+      "end": "2024-07-31"
+    },
+    "timezone": "Europe/Berlin",
+    "hourly_variables": [
+      "temperature_2m",
+      "precipitation",
+      "rain",
+      "snowfall",
+      "windspeed_10m",
+      "windgusts_10m",
+      "weather_code",
+      "visibility"
+    ]
+  },
+  "fetch_summary": {
+    "stations_in_coords_file": 95,
+    "stations_fetched_this_run": 95,
+    "stations_from_cache": 0,
+    "successful": 95,
+    "failed": 0,
+    "total_weather_rows": 70680
+  },
+  "weather_summary": {
+    "total_rows": 70680,
+    "unique_stations": 95,
+    "unique_hours": 744,
+    "rows_per_station_avg": 744.0,
+    "date_min": "2024-07-01 00:00:00",
+    "date_max": "2024-07-31 23:00:00",
+    "temperature_2m_mean": 19.33,
+    "precipitation_total_mm": 8205.4,
+    "hours_with_rain": 13707
+  },
+  "fetch_log": [
+    {
+      "eva": "08000105",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.1066539,
+      "longitude": 8.6625808
+    },
+    {
+      "eva": "08000261",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.1407253,
+      "longitude": 11.5569426
+    },
+    {
+      "eva": "08000152",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.3770908,
+      "longitude": 9.7418374
+    },
+    {
+      "eva": "08010404",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.5347694,
+      "longitude": 13.1956287
+    },
+    {
+      "eva": "08002549",
+      "status": "success",
+      "rows": 744,
+      "latitude": 53.5531993,
+      "longitude": 10.0064364
+    },
+    {
+      "eva": "08000207",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.9427839,
+      "longitude": 6.9590705
+    },
+    {
+      "eva": "08000284",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.4462031,
+      "longitude": 11.0818654
+    },
+    {
+      "eva": "08003200",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.3113881,
+      "longitude": 9.4477049
+    },
+    {
+      "eva": "08098160",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.5250175,
+      "longitude": 13.369448
+    },
+    {
+      "eva": "08000128",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.5328328,
+      "longitude": 9.9351811
+    },
+    {
+      "eva": "08000244",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.4796632,
+      "longitude": 8.4698178
+    },
+    {
+      "eva": "08011113",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.4759806,
+      "longitude": 13.3650726
+    },
+    {
+      "eva": "08000115",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.5514658,
+      "longitude": 9.6762161
+    },
+    {
+      "eva": "08000085",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.219734,
+      "longitude": 6.7943015
+    },
+    {
+      "eva": "08000096",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.7856099,
+      "longitude": 9.1833959
+    },
+    {
+      "eva": "08010101",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.9727731,
+      "longitude": 11.0378865
+    },
+    {
+      "eva": "08011160",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.5250175,
+      "longitude": 13.369448
+    },
+    {
+      "eva": "08010255",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.5103817,
+      "longitude": 13.4349112
+    },
+    {
+      "eva": "08000080",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.5178935,
+      "longitude": 7.4592831
+    },
+    {
+      "eva": "08000260",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.8015215,
+      "longitude": 9.9359849
+    },
+    {
+      "eva": "08000013",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.3656702,
+      "longitude": 10.8862827
+    },
+    {
+      "eva": "08000147",
+      "status": "success",
+      "rows": 744,
+      "latitude": 53.4557227,
+      "longitude": 9.9917669
+    },
+    {
+      "eva": "08000086",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.4296701,
+      "longitude": 6.7761771
+    },
+    {
+      "eva": "08002553",
+      "status": "success",
+      "rows": 744,
+      "latitude": 53.5521527,
+      "longitude": 9.9345653
+    },
+    {
+      "eva": "08002548",
+      "status": "success",
+      "rows": 744,
+      "latitude": 53.5611812,
+      "longitude": 9.9890232
+    },
+    {
+      "eva": "08006552",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.4291611,
+      "longitude": 10.7878068
+    },
+    {
+      "eva": "08000098",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.4514769,
+      "longitude": 7.0144679
+    },
+    {
+      "eva": "08000191",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.9936164,
+      "longitude": 8.4020518
+    },
+    {
+      "eva": "08000170",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.3994159,
+      "longitude": 9.9826024
+    },
+    {
+      "eva": "08000036",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.0293323,
+      "longitude": 8.5327135
+    },
+    {
+      "eva": "08004158",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.1499561,
+      "longitude": 11.4617667
+    },
+    {
+      "eva": "08000240",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.0013856,
+      "longitude": 8.2586022
+    },
+    {
+      "eva": "08000041",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.4785335,
+      "longitude": 7.2232341
+    },
+    {
+      "eva": "08010205",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.3465518,
+      "longitude": 12.3830858
+    },
+    {
+      "eva": "08000149",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.6785747,
+      "longitude": 7.807713
+    },
+    {
+      "eva": "08000150",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.1210733,
+      "longitude": 8.9292147
+    },
+    {
+      "eva": "08010159",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.4774872,
+      "longitude": 11.9872964
+    },
+    {
+      "eva": "08000142",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.36296,
+      "longitude": 7.4606062
+    },
+    {
+      "eva": "08000050",
+      "status": "success",
+      "rows": 744,
+      "latitude": 53.0831456,
+      "longitude": 8.8135421
+    },
+    {
+      "eva": "08000266",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.2544211,
+      "longitude": 7.1501208
+    },
+    {
+      "eva": "08000107",
+      "status": "success",
+      "rows": 744,
+      "latitude": 47.9977308,
+      "longitude": 7.8412948
+    },
+    {
+      "eva": "08000263",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.9564055,
+      "longitude": 7.635792
+    },
+    {
+      "eva": "08000183",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.7441209,
+      "longitude": 11.4374252
+    },
+    {
+      "eva": "08000010",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.9806657,
+      "longitude": 9.1438818
+    },
+    {
+      "eva": "08000044",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.7320436,
+      "longitude": 7.0967647
+    },
+    {
+      "eva": "08000294",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.2729063,
+      "longitude": 8.0615665
+    },
+    {
+      "eva": "08011102",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.5486453,
+      "longitude": 13.3902169
+    },
+    {
+      "eva": "08000068",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.872636,
+      "longitude": 8.6307431
+    },
+    {
+      "eva": "08000206",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.3508227,
+      "longitude": 7.5892636
+    },
+    {
+      "eva": "08000049",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.2527621,
+      "longitude": 10.5398097
+    },
+    {
+      "eva": "08000290",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.4695984,
+      "longitude": 7.9429235
+    },
+    {
+      "eva": "08000169",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.1597233,
+      "longitude": 9.9526525
+    },
+    {
+      "eva": "08000156",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.4034737,
+      "longitude": 8.6754223
+    },
+    {
+      "eva": "08000025",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.8916044,
+      "longitude": 10.8868478
+    },
+    {
+      "eva": "08073368",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.9412305,
+      "longitude": 6.9754558
+    },
+    {
+      "eva": "08000238",
+      "status": "success",
+      "rows": 744,
+      "latitude": 53.248706,
+      "longitude": 10.407855
+    },
+    {
+      "eva": "08000001",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.7677663,
+      "longitude": 6.0913818
+    },
+    {
+      "eva": "08000082",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.2915724,
+      "longitude": 6.7869558
+    },
+    {
+      "eva": "08000309",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.0122056,
+      "longitude": 12.0997326
+    },
+    {
+      "eva": "08000087",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.1611221,
+      "longitude": 7.004223
+    },
+    {
+      "eva": "08000055",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.124118,
+      "longitude": 8.5980244
+    },
+    {
+      "eva": "08000168",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.9840746,
+      "longitude": 10.5385869
+    },
+    {
+      "eva": "08010089",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.0658669,
+      "longitude": 13.7405404
+    },
+    {
+      "eva": "08010085",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.0402452,
+      "longitude": 13.7320768
+    },
+    {
+      "eva": "08002041",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.099356,
+      "longitude": 8.6863016
+    },
+    {
+      "eva": "08000250",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.0698313,
+      "longitude": 8.2439848
+    },
+    {
+      "eva": "08010304",
+      "status": "success",
+      "rows": 744,
+      "latitude": 54.0781503,
+      "longitude": 12.1311246
+    },
+    {
+      "eva": "08000199",
+      "status": "success",
+      "rows": 744,
+      "latitude": 54.3134725,
+      "longitude": 10.130965
+    },
+    {
+      "eva": "08000271",
+      "status": "success",
+      "rows": 744,
+      "latitude": 54.0703296,
+      "longitude": 9.9884451
+    },
+    {
+      "eva": "08000286",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.4749062,
+      "longitude": 6.8516806
+    },
+    {
+      "eva": "08000162",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.1152245,
+      "longitude": 8.6711118
+    },
+    {
+      "eva": "08000124",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.5862066,
+      "longitude": 8.6742306
+    },
+    {
+      "eva": "08000189",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.4359636,
+      "longitude": 7.7680865
+    },
+    {
+      "eva": "08000323",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.2411972,
+      "longitude": 6.990794
+    },
+    {
+      "eva": "08000118",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.5047677,
+      "longitude": 7.1022983
+    },
+    {
+      "eva": "08000291",
+      "status": "success",
+      "rows": 744,
+      "latitude": 53.144191,
+      "longitude": 8.2231132
+    },
+    {
+      "eva": "08000320",
+      "status": "success",
+      "rows": 744,
+      "latitude": 47.8557873,
+      "longitude": 12.1272983
+    },
+    {
+      "eva": "08000262",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.1277214,
+      "longitude": 11.6055187
+    },
+    {
+      "eva": "08010406",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.5074342,
+      "longitude": 13.3325608
+    },
+    {
+      "eva": "08000275",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.3495669,
+      "longitude": 8.1403886
+    },
+    {
+      "eva": "08010224",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.1305167,
+      "longitude": 11.6267187
+    },
+    {
+      "eva": "08000253",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.1968567,
+      "longitude": 6.4452964
+    },
+    {
+      "eva": "08000237",
+      "status": "success",
+      "rows": 744,
+      "latitude": 53.8671234,
+      "longitude": 10.6704782
+    },
+    {
+      "eva": "08000316",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.2797707,
+      "longitude": 7.4373615
+    },
+    {
+      "eva": "08003368",
+      "status": "success",
+      "rows": 744,
+      "latitude": 50.9412305,
+      "longitude": 6.9754558
+    },
+    {
+      "eva": "08000257",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.6351798,
+      "longitude": 8.3566466
+    },
+    {
+      "eva": "08010405",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.421199,
+      "longitude": 13.1800603
+    },
+    {
+      "eva": "08012666",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.3917908,
+      "longitude": 13.0672397
+    },
+    {
+      "eva": "08098262",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.1400866,
+      "longitude": 11.5531716
+    },
+    {
+      "eva": "08000157",
+      "status": "success",
+      "rows": 744,
+      "latitude": 49.1431403,
+      "longitude": 9.2076637
+    },
+    {
+      "eva": "08000274",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.2044376,
+      "longitude": 6.6846709
+    },
+    {
+      "eva": "08098261",
+      "status": "success",
+      "rows": 744,
+      "latitude": 48.1417281,
+      "longitude": 11.5558398
+    },
+    {
+      "eva": "08000297",
+      "status": "success",
+      "rows": 744,
+      "latitude": 51.7128598,
+      "longitude": 8.7404385
+    },
+    {
+      "eva": "08011201",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.3642841,
+      "longitude": 13.5081573
+    },
+    {
+      "eva": "08010036",
+      "status": "success",
+      "rows": 744,
+      "latitude": 52.5097832,
+      "longitude": 13.4961404
+    }
+  ],
+  "output_files": {
+    "weather_parquet": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\weather_by_station_2024-07.parquet",
+    "weather_cache": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\weather_by_station_2024-07_cache.parquet"
+  },
+  "ready_for_section_3": true
+}

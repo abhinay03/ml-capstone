@@ -1,0 +1,185 @@
+{
+  "metadata": {
+    "notebook": "05_Exploratory_Data_Analysis",
+    "section": "Section 3 — Close-Out",
+    "created_at_utc": "2026-07-05T15:03:34.659032+00:00",
+    "target_month": "2024-07",
+    "status": "COMPLETE"
+  },
+  "eda_sections": [
+    {
+      "section": "Section 1",
+      "focus": "Delay distribution & class balance",
+      "analysis_rows": 132268,
+      "output": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\eda_delay_report_2024-07.json"
+    },
+    {
+      "section": "Section 2",
+      "focus": "Weather vs delay (RQ3)",
+      "analysis_rows": 132268,
+      "output": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\eda_weather_report_2024-07.json"
+    }
+  ],
+  "key_findings": {
+    "delay_distribution": {
+      "finding": "Delays are right-skewed: median 4 min, mean 10.57 min",
+      "implication": "Use median/percentiles in report; RMSE sensitive to outliers"
+    },
+    "class_balance": {
+      "finding": "42.32% delayed (≥6 min) vs 57.68% on-time",
+      "implication": "Manageable imbalance — use F1/ROC-AUC; consider class_weight"
+    },
+    "weather_correlation": {
+      "finding": "Linear Pearson correlations between weather and delay are weak (<0.15)",
+      "implication": "Weather effect may be non-linear — include in models and test via ablation (RQ2)"
+    },
+    "precipitation_bins": {
+      "finding": "Delay rate varies across precipitation bins",
+      "implication": "Supports including precipitation as a feature"
+    },
+    "hypotheses": {
+      "H1": {
+        "statement": "Higher precipitation increases ICE delay probability",
+        "dry_delay_rate_pct": 41.59,
+        "heavy_rain_delay_rate_pct": 44.36,
+        "supported": true
+      },
+      "H2": {
+        "statement": "Higher wind gusts increase expected delay magnitude",
+        "correlation_windgusts_vs_delay_in_min": 0.0079,
+        "supported": true
+      }
+    },
+    "redundant_features": {
+      "finding": "precipitation and rain are perfectly correlated (r=1.0)",
+      "implication": "Drop rain in feature engineering — keep precipitation only"
+    },
+    "july_snowfall": {
+      "finding": "No snowfall variation in July",
+      "implication": "snowfall column has no variance — exclude from features"
+    }
+  },
+  "delay_stats": {
+    "count": 132268,
+    "mean": 10.57,
+    "median": 4.0,
+    "std": 17.56,
+    "min": -17,
+    "max": 298,
+    "percentile_25": 1.0,
+    "percentile_75": 13.0,
+    "percentile_90": 30.0,
+    "percentile_95": 44.64999999999418,
+    "percentile_99": 84.0,
+    "early_arrivals_lt_0": 2602,
+    "on_time_eq_0": 25818,
+    "late_gt_0": 103848,
+    "late_gte_threshold": 55972
+  },
+  "class_balance": {
+    "threshold_minutes": 6,
+    "on_time_count": 76296,
+    "delayed_count": 55972,
+    "on_time_pct": 57.68,
+    "delayed_pct": 42.32,
+    "imbalance_ratio": 1.36
+  },
+  "top_weather_correlations": {
+    "vs_is_delayed": [
+      "temperature_2m",
+      "weather_code",
+      "visibility"
+    ],
+    "vs_delay_in_min": [
+      "temperature_2m",
+      "precipitation",
+      "rain"
+    ]
+  },
+  "precipitation_bin_analysis": [
+    {
+      "precip_bin": "0 mm (dry)",
+      "stops": 102686,
+      "delay_rate_pct": 41.59,
+      "mean_delay_min": 10.5,
+      "median_delay_min": 4.0
+    },
+    {
+      "precip_bin": "0–0.5 mm (light)",
+      "stops": 22547,
+      "delay_rate_pct": 44.97,
+      "mean_delay_min": 10.89,
+      "median_delay_min": 4.0
+    },
+    {
+      "precip_bin": "0.5–2 mm (moderate)",
+      "stops": 5378,
+      "delay_rate_pct": 44.55,
+      "mean_delay_min": 10.7,
+      "median_delay_min": 4.0
+    },
+    {
+      "precip_bin": ">2 mm (heavy)",
+      "stops": 1657,
+      "delay_rate_pct": 44.36,
+      "mean_delay_min": 10.11,
+      "median_delay_min": 4.0
+    }
+  ],
+  "artifacts": {
+    "eda_delay_report": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\eda_delay_report_2024-07.json",
+      "size_mb": 0.0
+    },
+    "eda_weather_report": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\eda_weather_report_2024-07.json",
+      "size_mb": 0.0
+    },
+    "delay_histogram": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_delay_histogram_2024-07.png",
+      "size_mb": 0.06
+    },
+    "class_balance": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_class_balance_2024-07.png",
+      "size_mb": 0.06
+    },
+    "delay_rate_precip": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_delay_rate_by_precipitation_2024-07.png",
+      "size_mb": 0.07
+    },
+    "boxplot_precip": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_delay_by_precipitation_2024-07.png",
+      "size_mb": 0.08
+    },
+    "boxplot_temp": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_delay_by_temperature_2024-07.png",
+      "size_mb": 0.05
+    },
+    "correlation_heatmap": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_correlation_heatmap_2024-07.png",
+      "size_mb": 0.13
+    },
+    "merged_parquet": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\ice_weather_merged_2024-07.parquet",
+      "size_mb": 6.21
+    }
+  },
+  "ready_for_notebook_06": true,
+  "notebook_06_tasks": [
+    "Define final feature columns (operational + weather)",
+    "Drop leaky columns (arrival_change_time, departure_change_time)",
+    "Drop redundant/zero-variance columns (rain, snowfall)",
+    "Derive is_delayed target",
+    "Time-based train/test split",
+    "Save modeling_ready_2024-07.parquet"
+  ]
+}

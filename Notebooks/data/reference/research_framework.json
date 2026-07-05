@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "notebook": "01_Project_Definition_and_Data_Understanding",
+    "section": "Section 2",
+    "created_at_utc": "2026-07-05T11:30:18.443986+00:00",
+    "depends_on": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\project_config.json"
+  },
+  "research_questions": {
+    "RQ1": {
+      "question": "Can operational features alone predict ICE train stop delays?",
+      "answered_in": [
+        "Notebook 07",
+        "Notebook 09"
+      ],
+      "method": "Train baseline models using only railway features."
+    },
+    "RQ2": {
+      "question": "Does adding historical weather data improve delay prediction?",
+      "answered_in": [
+        "Notebook 07",
+        "Notebook 09"
+      ],
+      "method": "Compare models with vs without weather features (ablation)."
+    },
+    "RQ3": {
+      "question": "Which weather variables are most associated with ICE delays?",
+      "answered_in": [
+        "Notebook 05",
+        "Notebook 09"
+      ],
+      "method": "EDA correlations + feature importance / SHAP in final models."
+    }
+  },
+  "classification": {
+    "target_column": "is_delayed",
+    "derivation": {
+      "source_column": "delay_in_min",
+      "rule": "is_delayed = 1 if delay_in_min >= 6, else 0",
+      "early_arrival_rule": "delay_in_min < 0 treated as on-time (is_delayed = 0)",
+      "canceled_rule": "is_canceled == True rows excluded in Notebook 03 (documented there)"
+    },
+    "delay_threshold_minutes": 6,
+    "threshold_justification": "6 minutes aligns with Deutsche Bahn significant-delay reporting. Final value validated in Notebook 05 EDA.",
+    "primary_metrics": [
+      "f1_score",
+      "roc_auc",
+      "confusion_matrix"
+    ],
+    "secondary_metrics": [
+      "precision",
+      "recall",
+      "accuracy"
+    ],
+    "metric_rationale": "ICE stops are mostly on-time (class imbalance). F1 and ROC-AUC are more informative than accuracy alone."
+  },
+  "regression": {
+    "target_column": "delay_in_min",
+    "target_filter": "Non-canceled stops; delay can be negative (early) or positive (late).",
+    "primary_metrics": [
+      "mae",
+      "rmse"
+    ],
+    "secondary_metrics": [
+      "r2_score",
+      "median_absolute_error"
+    ],
+    "metric_rationale": "MAE is interpretable in minutes. RMSE penalizes large prediction errors (severe delays)."
+  },
+  "hypotheses": {
+    "H1": {
+      "statement": "Higher hourly precipitation increases ICE delay probability.",
+      "type": "classification",
+      "test": "Compare delay rate across precipitation bins in EDA; check weather feature importance in classifier."
+    },
+    "H2": {
+      "statement": "Higher wind gusts increase expected delay magnitude.",
+      "type": "regression",
+      "test": "Correlation/regression EDA; wind feature coefficient/importance."
+    },
+    "H3": {
+      "statement": "Models with weather features outperform operational-only baselines.",
+      "type": "both",
+      "test": "Ablation study: same algorithm, with vs without weather columns."
+    }
+  },
+  "evaluation_protocol": {
+    "train_test_split": "time-based (no random shuffle) — implemented in Notebook 07",
+    "baseline_requirement": "Must beat naive baseline before using advanced models",
+    "naive_baselines": {
+      "classification": "always predict majority class (on-time)",
+      "regression": "always predict mean delay_in_min"
+    },
+    "weather_ablation": {
+      "description": "Train identical model twice: with and without weather features",
+      "purpose": "Directly answers RQ2"
+    }
+  },
+  "alternatives_considered": {
+    "delay_threshold_5_min": "Rejected as default — more noise from minor timing differences",
+    "delay_threshold_15_min": "Rejected — too few positive cases for classification",
+    "accuracy_only": "Rejected — misleading under class imbalance",
+    "random_train_test_split": "Rejected — causes temporal data leakage"
+  }
+}
