@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ICE Train Delay Prediction — ML Capstone</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a; color: #e2e8f0; overflow: hidden; height: 100vh;
+    }
+    .slides-container {
+      display: flex; height: 100vh; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    .slide {
+      min-width: 100vw; height: 100vh; padding: 50px 80px;
+      display: flex; flex-direction: column; justify-content: center; position: relative; overflow-y: auto;
+    }
+    .slide-inner { max-width: 1100px; margin: 0 auto; width: 100%; position: relative; z-index: 1; }
+
+    /* Decorative BG shapes */
+    .slide::before {
+      content: ''; position: absolute; top: -50%; right: -20%;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, #1e3a5f20 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .slide::after {
+      content: ''; position: absolute; bottom: -30%; left: -10%;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, #2e1a5f15 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .slide-number {
+      position: absolute; bottom: 24px; right: 40px;
+      font-size: 0.8rem; color: #334155; font-variant-numeric: tabular-nums; z-index: 2;
+      background: #1e293b80; padding: 4px 12px; border-radius: 20px; backdrop-filter: blur(4px);
+    }
+    .nav-hint {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      font-size: 0.75rem; color: #475569; display: flex; gap: 12px; align-items: center; z-index: 2;
+    }
+    .nav-hint kbd {
+      background: #1e293b; padding: 2px 8px; border-radius: 4px;
+      border: 1px solid #334155; font-size: 0.7rem; color: #475569;
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
+      z-index: 100; transition: width 0.5s ease;
+    }
+
+    /* Animations */
+    .anim { opacity: 0; transform: translateY(30px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .anim.active { opacity: 1; transform: translateY(0); }
+    .anim-delay-1 { transition-delay: 0.1s; }
+    .anim-delay-2 { transition-delay: 0.2s; }
+    .anim-delay-3 { transition-delay: 0.3s; }
+    .anim-delay-4 { transition-delay: 0.4s; }
+    .anim-delay-5 { transition-delay: 0.5s; }
+    .anim-delay-6 { transition-delay: 0.6s; }
+    .anim-delay-7 { transition-delay: 0.7s; }
+    .anim-scale { opacity: 0; transform: scale(0.85); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .anim-scale.active { opacity: 1; transform: scale(1); }
+    .anim-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .anim-left.active { opacity: 1; transform: translateX(0); }
+
+    /* Typography */
+    h1 { font-size: 3.2rem; font-weight: 800; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; line-height: 1.2; }
+    h2 { font-size: 2rem; font-weight: 700; color: #60a5fa; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 12px; }
+    h2 .h2-icon { font-size: 1.6rem; -webkit-text-fill-color: initial; color: #60a5fa; }
+    h3 { font-size: 1.15rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem; }
+    p { font-size: 1rem; color: #cbd5e1; margin-bottom: 0.75rem; line-height: 1.6; }
+    .subtitle { font-size: 1.2rem; color: #94a3b8; margin-bottom: 1.5rem; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    .card {
+      background: #1e293b; border-radius: 12px; padding: 20px;
+      border: 1px solid #334155; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .card:hover { transform: translateY(-4px); border-color: #60a5fa60; box-shadow: 0 8px 24px #00000040; }
+    .card .num { font-size: 2.2rem; font-weight: 800; color: #60a5fa; display: block; line-height: 1.2; }
+    .card .label { font-size: 0.85rem; color: #94a3b8; display: block; margin-top: 2px; }
+    .card p { font-size: 0.9rem; margin-top: 0.4rem; color: #94a3b8; }
+
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 0.75rem; font-weight: 600; margin-right: 4px;
+    }
+    .badge-blue { background: #1e3a5f; color: #60a5fa; }
+    .badge-purple { background: #2e1a5f; color: #a78bfa; }
+    .badge-green { background: #1a3f2e; color: #34d399; }
+    .badge-red { background: #3f1a1a; color: #f87171; }
+    .badge-yellow { background: #3f3a1a; color: #fbbf24; }
+
+    .tag {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 0.7rem; background: #1e293b; color: #64748b; border: 1px solid #334155; margin: 2px;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.9rem; }
+    th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #1e293b; }
+    th { color: #60a5fa; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { color: #cbd5e1; }
+    tr:hover td { background: #1e293b80; }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #1e3a5f40, #2e1a5f40);
+      border-radius: 12px; padding: 20px; border: 1px solid #60a5fa30; margin: 0.75rem 0;
+    }
+    .highlight-box p { margin-bottom: 0; font-size: 0.95rem; }
+
+    ul { list-style: none; }
+    ul li { padding: 4px 0; padding-left: 18px; position: relative; color: #cbd5e1; font-size: 0.9rem; }
+    ul li::before { content: ""; position: absolute; left: 0; top: 11px; width: 6px; height: 6px; border-radius: 50%; background: #60a5fa; }
+
+    .center { text-align: center; align-items: center; }
+    .center .slide-inner { display: flex; flex-direction: column; align-items: center; }
+
+    /* SVG Icons inline */
+    .icon-wrap { display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .icon-svg { width: 24px; height: 24px; flex-shrink: 0; }
+
+    /* Train icon pulse on title */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .train-icon { animation: float 3s ease-in-out infinite; }
+
+    /* Visual bar chart */
+    .bar-chart { display: flex; gap: 8px; align-items: flex-end; height: 100px; margin: 1rem 0; }
+    .bar { flex: 1; border-radius: 4px 4px 0 0; min-height: 4px; position: relative; transition: height 0.6s ease; }
+    .bar-label { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 0.65rem; color: #64748b; white-space: nowrap; }
+    .bar-val { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #94a3b8; }
+
+    /* Merge visual */
+    .merge-flow { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 1rem 0; flex-wrap: wrap; }
+    .merge-node { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 12px 18px; text-align: center; min-width: 120px; }
+    .merge-node h4 { font-size: 0.8rem; color: #94a3b8; margin-bottom: 4px; }
+    .merge-node p { font-size: 0.75rem; color: #64748b; margin: 0; }
+
+    /* Flow diagram */
+    .flow { display: flex; align-items: center; justify-content: center; gap: 2px; margin: 1.5rem 0; flex-wrap: wrap; }
+    .flow-step { text-align: center; min-width: 70px; }
+    .flow-circle {
+      width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 4px; font-size: 1rem; font-weight: 800; transition: all 0.3s;
+    }
+    .flow-circle.active { background: linear-gradient(135deg, #1e3a5f, #2e1a5f); color: #60a5fa; box-shadow: 0 0 20px #60a5fa30; }
+    .flow-circle.future { background: #1e293b; color: #475569; border: 1px solid #334155; }
+    .flow-label { font-size: 0.7rem; }
+    .flow-label.active { color: #94a3b8; }
+    .flow-label.future { color: #334155; }
+    .flow-arrow { color: #475569; font-size: 1rem; }
+
+    /* Correlation table visual */
+    .corr-bar { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #60a5fa, #a78bfa); margin-top: 4px; }
+
+    /* Merge legend */
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 0.5rem; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #64748b; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    @media (max-width: 768px) {
+      .slide { padding: 30px 20px; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.4rem; }
+      .flow-circle { width: 36px; height: 36px; font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="slides-container" id="slidesContainer">
+
+<!-- ====== SLIDE 1: TITLE ====== -->
+<div class="slide center">
+  <div class="slide-inner">
+    <svg class="train-icon anim anim-delay-1" width="80" height="80" viewBox="0 0 80 80" style="margin-bottom: 0.5rem;">
+      <rect x="10" y="25" width="60" height="30" rx="6" fill="none" stroke="#60a5fa" stroke-width="2.5"/>
+      <rect x="15" y="30" width="18" height="12" rx="2" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+      <rect x="37" y="30" width="18" height="12" rx="2" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+      <rect x="59" y="30" width="8" height="12" rx="2" fill="none" stroke="#34d399" stroke-width="1.5"/>
+      <circle cx="22" cy="62" r="6" fill="none" stroke="#f87171" stroke-width="2"/>
+      <circle cx="58" cy="62" r="6" fill="none" stroke="#f87171" stroke-width="2"/>
+      <line x1="10" y1="25" x2="10" y2="20" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+      <line x1="25" y1="25" x2="25" y2="20" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="10" cy="20" r="2" fill="#60a5fa"/>
+      <circle cx="25" cy="20" r="2" fill="#60a5fa"/>
+      <line x1="14" y1="55" x2="22" y2="55" stroke="#475569" stroke-width="1.5"/>
+      <line x1="50" y1="55" x2="58" y2="55" stroke="#475569" stroke-width="1.5"/>
+      <rect x="32" y="55" width="16" height="4" rx="2" fill="none" stroke="#475569" stroke-width="1"/>
+    </svg>
+    <h1 class="anim anim-delay-2">ICE Train Delay Prediction</h1>
+    <p class="subtitle anim anim-delay-3">Using Railway Operational Data &amp; Historical Weather</p>
+    <div class="anim anim-delay-4" style="margin-top: 1rem;">
+      <span class="badge badge-blue">Classification</span>
+      <span class="badge badge-purple">Regression</span>
+      <span class="badge badge-green">Deutsche Bahn</span>
+      <span class="badge badge-red">Open-Meteo</span>
+      <span class="badge badge-yellow">Capstone Project</span>
+    </div>
+    <p class="anim anim-delay-5" style="color: #475569; margin-top: 2rem;">July 2024 &bull; 95 Stations &bull; 146K Stops &bull; 32 Features</p>
+  </div>
+  <span class="slide-number">1 / 14</span>
+</div>
+
+<!-- ====== SLIDE 2: PROBLEM ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      Problem
+    </h2>
+    <div class="grid-2" style="margin-top: 0.5rem;">
+      <div class="card anim anim-delay-1">
+        <div class="icon-wrap">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+          <h3 style="margin:0;">Classification</h3>
+        </div>
+        <div class="num" style="font-size:1.4rem; margin-top:8px;">Will an ICE stop be delayed &ge; 6 min?</div>
+        <p>Binary prediction: delayed or on-time. Threshold aligns with Deutsche Bahn's significant-delay reporting.</p>
+        <p style="font-size:0.8rem; color:#64748b;">Metrics: F1, ROC-AUC, Confusion Matrix</p>
+      </div>
+      <div class="card anim anim-delay-2">
+        <div class="icon-wrap">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="20" x2="20" y2="20"/><line x1="4" y1="20" x2="4" y2="14"/><line x1="8" y1="20" x2="8" y2="10"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="16" y1="20" x2="16" y2="10"/><line x1="20" y1="20" x2="20" y2="4"/>
+          </svg>
+          <h3 style="margin:0;">Regression</h3>
+        </div>
+        <div class="num" style="font-size:1.4rem; margin-top:8px;">How many minutes late?</div>
+        <p>Continuous prediction. MAE is interpretable in minutes; RMSE penalizes large errors (severe delays).</p>
+        <p style="font-size:0.8rem; color:#64748b;">Metrics: MAE, RMSE, R&sup2;</p>
+      </div>
+    </div>
+    <div class="highlight-box anim anim-delay-3" style="margin-top:1rem;">
+      <p><strong>Why both?</strong> Operators need to know <em>whether</em> to trigger mitigations and <em>how much</em> to inform passengers &mdash; two sides of the same operational need.</p>
+    </div>
+  </div>
+  <span class="slide-number">2 / 14</span>
+</div>
+
+<!-- ====== SLIDE 3: DATA SOURCES ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+      </svg>
+      Data Sources
+    </h2>
+    <div class="grid-2" style="margin-top:0.5rem;">
+      <div class="card anim anim-delay-1">
+        <div class="icon-wrap" style="justify-content:flex-start;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+          </svg>
+          <h3 style="margin:0;">Deutsche Bahn</h3>
+        </div>
+        <div style="margin:8px 0;">
+          <span class="tag">Hugging Face</span>
+          <span class="tag">54.8 GB</span>
+          <span class="tag">187M rows</span>
+          <span class="tag">CC BY 4.0</span>
+        </div>
+        <p>Monthly Parquet shards from all German train types. 17 columns: timestamps, station IDs, delay, cancellations, route info.</p>
+        <div style="font-size:0.8rem; color:#475569; margin-top:4px;">Source: piebro/deutsche-bahn-data</div>
+      </div>
+      <div class="card anim anim-delay-2">
+        <div class="icon-wrap" style="justify-content:flex-start;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2a10 10 0 0 0-10 10"/><path d="M2 12h20"/>
+            <circle cx="12" cy="12" r="1"/><circle cx="8" cy="12" r="1"/><circle cx="16" cy="12" r="1"/>
+          </svg>
+          <h3 style="margin:0;">Open-Meteo Weather</h3>
+        </div>
+        <div style="margin:8px 0;">
+          <span class="tag">Archive API</span>
+          <span class="tag">Hourly</span>
+          <span class="tag">Free</span>
+        </div>
+        <p>8 hourly variables per station: temperature, precipitation, rain, snowfall, windspeed, windgusts, weather code, visibility.</p>
+        <div style="font-size:0.8rem; color:#475569; margin-top:4px;">95 stations &times; 744 hours = 70,680 weather rows</div>
+      </div>
+    </div>
+    <div class="highlight-box anim anim-delay-3" style="margin-top:0.75rem;">
+      <p><strong>Scope:</strong> One monthly shard (July 2024). ~2M total rows &rarr; ~158K ICE rows (7.87%). Full dataset excluded from repo.</p>
+    </div>
+  </div>
+  <span class="slide-number">3 / 14</span>
+</div>
+
+<!-- ====== SLIDE 4: PIPELINE ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+        <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+      </svg>
+      Pipeline
+    </h2>
+    <div class="flow anim anim-delay-1">
+      <div class="flow-step"><div class="flow-circle active">01</div><div class="flow-label active">Define</div></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step"><div class="flow-circle active">02</div><div class="flow-label active">Acquire</div></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step"><div class="flow-circle active">03</div><div class="flow-label active">Clean</div></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step"><div class="flow-circle active">04</div><div class="flow-label active">Integrate</div></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step"><div class="flow-circle active">05</div><div class="flow-label active">Explore</div></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step"><div class="flow-circle future">06</div><div class="flow-label future">Model</div></div>
+    </div>
+    <p class="anim anim-delay-2" style="text-align:center; font-size:0.8rem; color:#475569;">* Notebooks 06&ndash;10 planned</p>
+    <div class="anim anim-delay-3" style="margin-top:0.5rem;">
+      <table>
+        <tr><th>#</th><th>Key Action</th><th>Output</th></tr>
+        <tr><td>01</td><td>Define problem, configs, research framework</td><td>6 reference JSON files</td></tr>
+        <tr><td>02</td><td>Download Parquet, filter ICE rows</td><td><code>ice_raw_2024-07.parquet</code></td></tr>
+        <tr><td>03</td><td>Standardize timestamps, remove cancellations</td><td><code>ice_cleaned_2024-07.parquet</code></td></tr>
+        <tr><td>04</td><td>Geocode stations, fetch weather, left-merge</td><td><code>ice_weather_merged_2024-07.parquet</code></td></tr>
+        <tr><td>05</td><td>Delay distribution, weather correlations</td><td>EDA reports + 6 figures</td></tr>
+      </table>
+    </div>
+  </div>
+  <span class="slide-number">4 / 14</span>
+</div>
+
+<!-- ====== SLIDE 5: DATASET FACTS ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="12" y1="4" x2="12" y2="20"/>
+      </svg>
+      Dataset Facts
+    </h2>
+    <div class="grid-4" style="margin-top:0.5rem;">
+      <div class="card anim anim-delay-1">
+        <span class="num anim-scale">146,389</span>
+        <span class="label">Cleaned ICE Stops</span>
+      </div>
+      <div class="card anim anim-delay-2">
+        <span class="num anim-scale">95</span>
+        <span class="label">Unique Stations</span>
+      </div>
+      <div class="card anim anim-delay-3">
+        <span class="num anim-scale">812</span>
+        <span class="label">Unique Trains</span>
+      </div>
+      <div class="card anim anim-delay-4">
+        <span class="num anim-scale">32</span>
+        <span class="label">Features</span>
+      </div>
+    </div>
+
+    <!-- Visual bar chart: delay distribution -->
+    <div class="card anim anim-delay-2" style="margin-top:0.75rem; padding:16px 20px;">
+      <div class="icon-wrap" style="justify-content:flex-start; margin-bottom:4px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><line x1="4" y1="20" x2="20" y2="20"/><line x1="4" y1="20" x2="4" y2="14"/><line x1="8" y1="20" x2="8" y2="10"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="16" y1="20" x2="16" y2="10"/><line x1="20" y1="20" x2="20" y2="4"/></svg>
+        <span style="font-size:0.85rem; color:94a3b8;">Key Stats</span>
+      </div>
+      <div class="grid-4" style="gap:10px; margin-top:4px;">
+        <div><div class="num" style="font-size:1.3rem;">42.32%</div><span class="label">Delayed (&ge;6m)</span></div>
+        <div><div class="num" style="font-size:1.3rem;">10.57 min</div><span class="label">Mean Delay</span></div>
+        <div><div class="num" style="font-size:1.3rem;">4.0 min</div><span class="label">Median Delay</span></div>
+        <div><div class="num" style="font-size:1.3rem;">1.36:1</div><span class="label">Imbalance</span></div>
+        <div><div class="num" style="font-size:1.3rem;">7.28%</div><span class="label">Cancelled</span></div>
+        <div><div class="num" style="font-size:1.3rem;">90.35%</div><span class="label">Weather Match</span></div>
+        <div><div class="num" style="font-size:1.3rem;">84 min</div><span class="label">99th Percentile</span></div>
+        <div><div class="num" style="font-size:1.3rem;">298 min</div><span class="label">Max Delay</span></div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">5 / 14</span>
+</div>
+
+<!-- ====== SLIDE 6: MERGE STRATEGY ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-9 9"/><path d="M3 21l9-9"/>
+      </svg>
+      Merge Strategy
+    </h2>
+    <div class="merge-flow anim anim-delay-1">
+      <div class="merge-node">
+        <h4>Railway</h4>
+        <p><span class="tag">eva</span> station ID</p>
+        <p><span class="tag">departure_planned_hour</span></p>
+        <div style="font-size:0.65rem; color:#475569; margin-top:4px;">planned time = no leakage</div>
+      </div>
+      <svg width="32" height="24" viewBox="0 0 32 24" style="flex-shrink:0;">
+        <line x1="2" y1="12" x2="26" y2="12" stroke="#475569" stroke-width="1.5"/>
+        <polygon points="26,8 30,12 26,16" fill="#60a5fa"/>
+      </svg>
+      <div class="merge-node" style="background:#1a3f2e; border-color:#34d39940;">
+        <h4 style="color:#34d399;">Open-Meteo</h4>
+        <p><span class="tag">lat</span> + <span class="tag">lon</span></p>
+        <p><span class="tag">time</span> (hourly)</p>
+        <div style="font-size:0.65rem; color:#475569; margin-top:4px;">8 weather variables</div>
+      </div>
+    </div>
+    <div class="highlight-box anim anim-delay-2">
+      <p><strong>Join:</strong> LEFT JOIN on (eva &rarr; lat/lon) AND (departure_planned_hour == weather.time)</p>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#60a5fa;"></span> 146,389 railway rows preserved</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#34d399;"></span> 132,268 matched (90.35%)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#475569;"></span> 14,121 null weather (no departure time)</span>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">6 / 14</span>
+</div>
+
+<!-- ====== SLIDE 7: EDA ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      Exploratory Data Analysis
+    </h2>
+    <div class="grid-2" style="margin-top:0.5rem;">
+      <div class="card anim anim-delay-1">
+        <h3>Delay Distribution</h3>
+        <p>Right-skewed: median 4 min vs mean 10.57 min. 95th: 44.6 min. 99th: 84 min.</p>
+        <div class="bar-chart" style="height:60px;">
+          <div class="bar" style="height:100%; background:linear-gradient(#60a5fa,#1e3a5f);"><span class="bar-label">0-6m</span><span class="bar-val">57.7%</span></div>
+          <div class="bar" style="height:65%; background:linear-gradient(#a78bfa,#2e1a5f);"><span class="bar-label">6-30m</span><span class="bar-val">28.4%</span></div>
+          <div class="bar" style="height:35%; background:linear-gradient(#fbbf24,#3f3a1a);"><span class="bar-label">30-60m</span><span class="bar-val">9.1%</span></div>
+          <div class="bar" style="height:12%; background:linear-gradient(#f87171,#3f1a1a);"><span class="bar-label">&gt;60m</span><span class="bar-val">4.8%</span></div>
+        </div>
+        <p style="font-size:0.8rem; color:#64748b;">&rArr; RMSE sensitive to the long tail of severe delays.</p>
+      </div>
+      <div class="card anim anim-delay-2">
+        <h3>Class Balance</h3>
+        <div style="display:flex; align-items:center; gap:12px; margin:8px 0;">
+          <div style="flex:1; height:40px; border-radius:6px; overflow:hidden; display:flex;">
+            <div style="flex:57.68; background:linear-gradient(#34d399,#1a3f2e); display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:600; color:#34d399;">57.7%</div>
+            <div style="flex:42.32; background:linear-gradient(#f87171,#3f1a1a); display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:600; color:#f87171;">42.3%</div>
+          </div>
+        </div>
+        <p style="font-size:0.8rem; color:#64748b;">&rArr; Manageable (1.36:1). Use F1/ROC-AUC over accuracy.</p>
+      </div>
+      <div class="card anim anim-delay-3">
+        <h3>Weather Correlations</h3>
+        <p>All Pearson r &lt; 0.15. Strongest: temperature (r = 0.137).</p>
+        <div style="margin-top:8px;">
+          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b;"><span>temperature</span><span>r = 0.137</span></div>
+          <div class="corr-bar" style="width:27%;"></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b; margin-top:6px;"><span>precipitation</span><span>r = 0.006</span></div>
+          <div class="corr-bar" style="width:5%;"></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b; margin-top:6px;"><span>windgusts</span><span>r = 0.008</span></div>
+          <div class="corr-bar" style="width:6%;"></div>
+        </div>
+        <p style="font-size:0.8rem; color:#64748b; margin-top:6px;">&rArr; Non-linear. Tree models should capture them.</p>
+      </div>
+      <div class="card anim anim-delay-4">
+        <h3>Precipitation Effect</h3>
+        <p>Delay rate rises from 41.6% (dry) to ~44.5% (wet). H1 supported.</p>
+        <div style="margin-top:8px;">
+          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b;"><span>Dry (0 mm)</span><span>41.6%</span></div>
+          <div class="corr-bar" style="width:83%;"></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b; margin-top:6px;"><span>Light (&lt;0.5 mm)</span><span>45.0%</span></div>
+          <div class="corr-bar" style="width:90%;"></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b; margin-top:6px;"><span>Heavy (&gt;2 mm)</span><span>44.4%</span></div>
+          <div class="corr-bar" style="width:89%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">7 / 14</span>
+</div>
+
+<!-- ====== SLIDE 8: HYPOTHESES & REDUNDANCY ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+      </svg>
+      Hypotheses &amp; Redundancy
+    </h2>
+    <div class="anim anim-delay-1" style="margin-top:0.5rem;">
+      <table>
+        <tr><th>Hypothesis</th><th>Statement</th><th>Result</th></tr>
+        <tr><td>H1</td><td>Higher precipitation &rarr; higher delay probability</td><td><span class="badge badge-green">Supported</span> (41.6% &rarr; 44.5%)</td></tr>
+        <tr><td>H2</td><td>Higher wind gusts &rarr; larger delay magnitude</td><td><span class="badge badge-green">Supported</span> (r = 0.008)</td></tr>
+        <tr><td>H3</td><td>Weather features improve prediction vs operational-only</td><td><span class="badge badge-yellow">To test</span> (ablation study)</td></tr>
+      </table>
+    </div>
+    <h3 class="anim anim-delay-2" style="margin-top:1.5rem;">Feature Redundancy</h3>
+    <div class="grid-2 anim anim-delay-2" style="margin-top:0.5rem;">
+      <div class="card anim anim-delay-3">
+        <div class="icon-wrap" style="justify-content:flex-start;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <span class="badge badge-red" style="margin:0;">DROP</span> <strong style="color:#e2e8f0;">rain</strong>
+        </div>
+        <p style="font-size:0.85rem; margin-top:6px;">Perfectly correlated with precipitation (r = 1.0). Keep precipitation only.</p>
+      </div>
+      <div class="card anim anim-delay-4">
+        <div class="icon-wrap" style="justify-content:flex-start;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <span class="badge badge-red" style="margin:0;">DROP</span> <strong style="color:#e2e8f0;">snowfall</strong>
+        </div>
+        <p style="font-size:0.85rem; margin-top:6px;">Zero variance in July. Exclude until winter data is added.</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">8 / 14</span>
+</div>
+
+<!-- ====== SLIDE 9: RESEARCH QUESTIONS ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      Research Questions
+    </h2>
+    <div class="grid-3" style="margin-top:1.5rem;">
+      <div class="card anim anim-delay-1" style="border-top:3px solid #60a5fa;">
+        <div class="num" style="font-size:1.3rem; color:#60a5fa;">RQ1</div>
+        <h3>Operational Features Only</h3>
+        <p>Can railway features alone (station, train, route, time) predict ICE delays?</p>
+        <p style="font-size:0.8rem; color:#64748b; margin-top:0.5rem;">Test: Baseline models without weather</p>
+      </div>
+      <div class="card anim anim-delay-2" style="border-top:3px solid #a78bfa;">
+        <div class="num" style="font-size:1.3rem; color:#a78bfa;">RQ2</div>
+        <h3>Weather Improves Prediction?</h3>
+        <p>Does adding weather features improve over operational-only baselines?</p>
+        <p style="font-size:0.8rem; color:#64748b; margin-top:0.5rem;">Test: Ablation &mdash; same model &plusmn; weather</p>
+      </div>
+      <div class="card anim anim-delay-3" style="border-top:3px solid #34d399;">
+        <div class="num" style="font-size:1.3rem; color:#34d399;">RQ3</div>
+        <h3>Which Weather Variables Matter?</h3>
+        <p>Which weather variables are most associated with ICE delays?</p>
+        <p style="font-size:0.8rem; color:#64748b; margin-top:0.5rem;">Test: SHAP / feature importance</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">9 / 14</span>
+</div>
+
+<!-- ====== SLIDE 10: DESIGN DECISIONS ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      Key Design Decisions
+    </h2>
+    <div class="grid-2" style="margin-top:0.5rem;">
+      <div class="card anim anim-delay-1"><h3>Time-based split?</h3><p>Random split causes temporal leakage. Time-split reflects real deployment: predict future from past.</p></div>
+      <div class="card anim anim-delay-2"><h3>6-minute threshold?</h3><p>Aligned with DB's "significant delay." 5 min too noisy; 15 min too few positives.</p></div>
+      <div class="card anim anim-delay-3"><h3>Drop change times?</h3><p>Actual times (<code>arrival_change_time</code>) encode the delay. Using them leaks the target.</p></div>
+      <div class="card anim anim-delay-4"><h3>Parquet + streaming?</h3><p>54.8 GB. Parquet is columnar + compressed. 100K-row chunks keep memory low.</p></div>
+      <div class="card anim anim-delay-5"><h3>Only ICE?</h3><p>High-profile long-distance. Removing other types avoids confounding from different profiles.</p></div>
+      <div class="card anim anim-delay-6"><h3>July only?</h3><p>Proof-of-concept shard for fast iteration. Pipeline parameterized for any month.</p></div>
+    </div>
+  </div>
+  <span class="slide-number">10 / 14</span>
+</div>
+
+<!-- ====== SLIDE 11: DB COLUMN ROLES ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+      </svg>
+      DB Column Roles
+    </h2>
+    <div class="anim anim-delay-1" style="margin-top:0.5rem;">
+      <table>
+        <tr><th>Column</th><th>Role</th><th>Note</th></tr>
+        <tr><td>eva</td><td><span class="badge badge-blue">Merge Key</span></td><td>Standardized numeric station ID</td></tr>
+        <tr><td>delay_in_min</td><td><span class="badge badge-purple">Target</span></td><td>Regression target; source for is_delayed</td></tr>
+        <tr><td>departure_planned_time</td><td><span class="badge badge-blue">Merge Key</span></td><td>Floored to hour for weather join</td></tr>
+        <tr><td>train_type</td><td><span class="badge badge-yellow">Filter</span></td><td>Keep only ICE</td></tr>
+        <tr><td>is_canceled</td><td><span class="badge badge-yellow">Filter</span></td><td>Remove canceled stops</td></tr>
+        <tr><td>station_name, train_number, etc.</td><td><span class="badge badge-green">Feature</span></td><td>Operational features for modeling</td></tr>
+        <tr><td>arrival_change_time, departure_change_time</td><td><span class="badge badge-red">Excluded</span></td><td>Target leakage</td></tr>
+        <tr><td>id, train_line_ride_id</td><td><span class="badge badge-red">Excluded</span></td><td>Identifiers, not features</td></tr>
+      </table>
+    </div>
+  </div>
+  <span class="slide-number">11 / 14</span>
+</div>
+
+<!-- ====== SLIDE 12: WEAK CORRELATIONS ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      Why Weak Weather Correlations?
+    </h2>
+    <div class="highlight-box anim anim-delay-1">
+      <p>Pearson r between weather variables and delay is &lt; 0.15 for all 8 variables.</p>
+    </div>
+    <div class="grid-2" style="margin-top:1rem;">
+      <div class="card anim anim-delay-2">
+        <div class="icon-wrap" style="justify-content:flex-start;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <h3 style="margin:0;">Non-linear Effects</h3>
+        </div>
+        <p style="margin-top:4px;">Delay rate jumps from 41.6% (dry) to 44.5% (wet), yet r &asymp; 0. The relationship is a step function, not linear.</p>
+      </div>
+      <div class="card anim anim-delay-3">
+        <div class="icon-wrap" style="justify-content:flex-start;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/></svg>
+          <h3 style="margin:0;">Tree Models Help</h3>
+        </div>
+        <p style="margin-top:4px;">Random Forest, XGBoost capture non-linear interactions naturally. Planned for Notebook 08.</p>
+      </div>
+      <div class="card anim anim-delay-4">
+        <div class="icon-wrap" style="justify-content:flex-start;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          <h3 style="margin:0;">Ablation Will Tell</h3>
+        </div>
+        <p style="margin-top:4px;">RQ2 compares identical models &plusmn; weather. Even with low r, weather may improve via non-linear paths.</p>
+      </div>
+      <div class="card anim anim-delay-5">
+        <div class="icon-wrap" style="justify-content:flex-start;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <h3 style="margin:0;">July Factor</h3>
+        </div>
+        <p style="margin-top:4px;">Summer is mild. Winter (snow, ice) may show stronger correlations. Pipeline handles more months.</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">12 / 14</span>
+</div>
+
+<!-- ====== SLIDE 13: NEXT STEPS ====== -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2 class="anim anim-left">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+      </svg>
+      Next Steps
+    </h2>
+    <div class="anim anim-delay-1" style="margin-top:0.5rem;">
+      <table>
+        <tr><th>#</th><th>Task</th><th>Status</th></tr>
+        <tr><td>06</td><td>Feature Engineering, final feature set, time-based split</td><td><span class="badge badge-yellow">Planned</span></td></tr>
+        <tr><td>07</td><td>Baseline models: logistic regression, decision tree</td><td><span class="badge badge-yellow">Planned</span></td></tr>
+        <tr><td>08</td><td>Advanced: Random Forest, XGBoost, Neural Net</td><td><span class="badge badge-yellow">Planned</span></td></tr>
+        <tr><td>09</td><td>Hyperparameter tuning, ablation study (RQ2)</td><td><span class="badge badge-yellow">Planned</span></td></tr>
+        <tr><td>10</td><td>Final pipeline, conclusion, future work</td><td><span class="badge badge-yellow">Planned</span></td></tr>
+      </table>
+    </div>
+    <div class="anim anim-delay-2" style="margin-top:1.5rem; background:#1e293b; border-radius:12px; padding:20px; border:1px solid #334155;">
+      <h3 style="display:flex; align-items:center; gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+        Modeling Strategy
+      </h3>
+      <ul>
+        <li><strong>Naive baselines:</strong> Majority class (classif.), mean delay (regress.)</li>
+        <li><strong>Operational-only:</strong> Railway features only (RQ1)</li>
+        <li><strong>Full model:</strong> Railway + weather features (RQ2)</li>
+        <li><strong>Ablation:</strong> Same algorithm &plusmn; weather &rarr; answers RQ2</li>
+        <li><strong>Feature importance:</strong> SHAP analysis &rarr; answers RQ3</li>
+      </ul>
+    </div>
+  </div>
+  <span class="slide-number">13 / 14</span>
+</div>
+
+<!-- ====== SLIDE 14: THANK YOU ====== -->
+<div class="slide center">
+  <div class="slide-inner">
+    <svg class="train-icon anim anim-delay-1" width="70" height="70" viewBox="0 0 80 80" style="margin-bottom:0.5rem; opacity:0.6;">
+      <rect x="10" y="25" width="60" height="30" rx="6" fill="none" stroke="#60a5fa" stroke-width="2"/>
+      <rect x="15" y="30" width="18" height="12" rx="2" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+      <rect x="37" y="30" width="18" height="12" rx="2" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+      <rect x="59" y="30" width="8" height="12" rx="2" fill="none" stroke="#34d399" stroke-width="1.5"/>
+      <circle cx="22" cy="62" r="6" fill="none" stroke="#f87171" stroke-width="2"/>
+      <circle cx="58" cy="62" r="6" fill="none" stroke="#f87171" stroke-width="2"/>
+      <line x1="10" y1="25" x2="10" y2="20" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+      <line x1="25" y1="25" x2="25" y2="20" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="10" cy="20" r="2" fill="#60a5fa"/>
+      <circle cx="25" cy="20" r="2" fill="#60a5fa"/>
+    </svg>
+    <h1 class="anim anim-scale anim-delay-2" style="font-size:2.8rem;">Thank You</h1>
+    <p class="subtitle anim anim-delay-3">ICE Train Delay Prediction Using Railway Operational Data and Historical Weather Data</p>
+    <div class="anim anim-delay-4" style="margin-top:1.5rem;">
+      <span class="tag">Deutsche Bahn</span>
+      <span class="tag">Open-Meteo</span>
+      <span class="tag">Nominatim</span>
+      <span class="tag">Python</span>
+      <span class="tag">Pandas</span>
+      <span class="tag">Parquet</span>
+      <span class="tag">Scikit-learn</span>
+    </div>
+    <div class="footer anim anim-delay-5" style="margin-top:1.5rem;">
+      <p>Capstone Project &bull; July 2026</p>
+      <p style="margin-top:0.3rem;"><a href="https://github.com/Manikanta679/ml-capstone-ice-delay-prediction" style="color:#60a5fa;">GitHub Repository</a></p>
+    </div>
+  </div>
+  <span class="slide-number">14 / 14</span>
+</div>
+
+</div>
+
+<div class="nav-hint">
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navigate &nbsp;&bull;&nbsp; <span id="slideIndicator">Slide 1 of 14</span>
+</div>
+
+<script>
+  const container = document.getElementById('slidesContainer');
+  const slides = document.querySelectorAll('.slide');
+  const indicator = document.getElementById('slideIndicator');
+  const progress = document.getElementById('progressBar');
+  let current = 0;
+  let isAnimating = false;
+
+  function goTo(index) {
+    if (isAnimating) return;
+    if (index < 0 || index >= slides.length) return;
+    isAnimating = true;
+    current = index;
+    container.style.transform = 'translateX(' + (-current * 100) + 'vw)';
+    progress.style.width = ((current + 1) / slides.length * 100) + '%';
+    animateSlide(current);
+    indicator.textContent = 'Slide ' + (current + 1) + ' of ' + slides.length;
+    setTimeout(() => { isAnimating = false; }, 600);
+  }
+
+  function animateSlide(index) {
+    const slide = slides[index];
+    const anims = slide.querySelectorAll('.anim, .anim-scale, .anim-left');
+    anims.forEach(el => el.classList.remove('active'));
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        anims.forEach(el => el.classList.add('active'));
+      });
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(current - 1);
+    } else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    else if (e.key === 'End') { e.preventDefault(); goTo(slides.length - 1); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) { if (diff > 0) goTo(current + 1); else goTo(current - 1); }
+  });
+
+  let wheelTimeout = false;
+  document.addEventListener('wheel', (e) => {
+    if (wheelTimeout) return; wheelTimeout = true;
+    if (e.deltaY > 0) goTo(current + 1); else goTo(current - 1);
+    setTimeout(() => { wheelTimeout = false; }, 800);
+  }, { passive: true });
+
+  // Click to advance
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.nav-hint') || e.target.closest('.slide-number')) return;
+    const rect = document.body.getBoundingClientRect();
+    if (e.clientX > rect.width / 2) goTo(current + 1);
+    else goTo(current - 1);
+  });
+
+  // Init
+  progress.style.width = (1 / slides.length * 100) + '%';
+  animateSlide(0);
+  indicator.textContent = 'Slide 1 of ' + slides.length;
+</script>
+
+</body>
+</html>
