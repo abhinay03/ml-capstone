@@ -52,6 +52,7 @@
   p { font-size: clamp(0.85rem, 1.8vh, 1.3rem); color: #333; line-height: 1.4; }
   .subtitle { font-size: clamp(1rem, 2.4vh, 1.6rem); color: #555; }
   li { font-size: clamp(0.82rem, 1.7vh, 1.2rem); color: #333; line-height: 1.35; }
+  code { font-family: 'Consolas', monospace; font-size: clamp(0.78rem, 1.5vh, 1.1rem); background: #f0f0f0; padding: 1px 4px; border-radius: 2px; }
 
   table { width: 100%; border-collapse: collapse; font-size: clamp(0.75rem, 1.5vh, 1.1rem); }
   th { background: #1a3a5c; color: #fff; padding: 0.6vh 0.8vw; text-align: left; font-weight: 600; font-size: clamp(0.7rem, 1.4vh, 1rem); }
@@ -66,6 +67,7 @@
     padding: clamp(6px, 1.2vh, 18px) clamp(10px, 1.5vw, 24px);
     font-size: clamp(0.78rem, 1.5vh, 1.15rem);
   }
+  .highlight strong { color: #1a3a5c; }
 
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(8px, 1.5vw, 24px); }
   .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(8px, 1.2vw, 20px); }
@@ -86,18 +88,6 @@
     background: #e8eef5; color: #1a3a5c; border-radius: 3px;
   }
 
-  .bar-chart { display: flex; gap: 6px; align-items: flex-end; height: clamp(35px, 7vh, 80px); margin: 0.3em 0; }
-  .bar { flex: 1; min-height: 4px; position: relative; border-radius: 2px 2px 0 0; }
-  .bar-label { position: absolute; bottom: -1.4em; left: 50%; transform: translateX(-50%); font-size: clamp(0.55rem, 1.1vh, 0.85rem); color: #666; white-space: nowrap; }
-  .bar-val { position: absolute; top: -1.4em; left: 50%; transform: translateX(-50%); font-size: clamp(0.55rem, 1.2vh, 0.85rem); color: #333; font-weight: 600; }
-
-  .corr-row { display: flex; align-items: center; gap: clamp(4px, 0.8vw, 14px); margin: 0.15em 0; font-size: clamp(0.68rem, 1.3vh, 1rem); }
-  .corr-bar { height: clamp(8px, 1.5vh, 16px); background: #1a3a5c; border-radius: 2px; flex-shrink: 0; }
-  .corr-row span:first-child { width: clamp(80px, 12vw, 170px); }
-
-  .balance-bar { display:flex; height:clamp(22px, 4vh, 40px); border-radius:3px; overflow:hidden; margin:0.3em 0; }
-  .balance-bar div { display:flex; align-items:center; justify-content:center; font-size:clamp(0.55rem, 1.2vh, 0.85rem); font-weight:600; color:#fff; }
-
   .nav-hint {
     position: fixed; bottom: 1vh; left: 50%; transform: translateX(-50%);
     font-size: clamp(0.5rem, 0.9vh, 0.8rem); color: #bbb; z-index: 10;
@@ -107,14 +97,15 @@
     border: 1px solid #ccc; font-size: clamp(0.45rem, 0.8vh, 0.7rem); color: #888;
   }
 
+  .flow { display: flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: wrap; margin: 0.3em 0; }
+  .flow-step { background: #e8eef5; border: 1px solid #c0d0e0; border-radius: 4px; padding: 0.3vh 0.8vw; font-size: clamp(0.7rem, 1.3vh, 1rem); color: #1a3a5c; }
+  .flow-arrow { font-size: clamp(0.7rem, 1.3vh, 1rem); color: #999; }
+
   @media (max-width: 768px) {
     .slide-body { padding: 2vh 2vw; }
     .slide-header { padding: 1vh 2vw; }
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     .nav-hint { display: none; }
-  }
-  @media (max-width: 480px) {
-    .slide-body { padding: 1.5vh 2vw; }
   }
 </style>
 </head>
@@ -126,312 +117,361 @@
 <div class="slide center">
   <div class="slide-body">
     <div class="slide-body-inner">
-      <h1>ICE Train Delay Prediction</h1>
-      <p class="subtitle">Using Railway Operational Data &amp; Historical Weather</p>
+      <h1>Predicting ICE Train Delays</h1>
+      <p class="subtitle">Using Operational and Weather Data</p>
       <p style="margin: 0.4em 0;">
         <span class="tag">Classification</span>
         <span class="tag">Regression</span>
         <span class="tag">Deutsche Bahn</span>
         <span class="tag">Open-Meteo</span>
       </p>
-      <p style="color: #888; margin-top: 1.2em; font-size: clamp(0.75rem, 1.5vh, 1.1rem);">July 2024 &bull; 95 Stations &bull; 146K Stops &bull; 32 Features</p>
+      <p style="color: #888; margin-top: 1.2em; font-size: clamp(0.75rem, 1.5vh, 1.1rem);">July 2024 &bull; 95 Stations &bull; 146K Stops &bull; Capstone Project</p>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 2: PROBLEM -->
+<!-- SLIDE 2: PROBLEM + RESEARCH QUESTIONS -->
 <div class="slide">
   <div class="slide-header">
-    <span class="title">1. The Problem</span>
-    <span class="num">2 / 9</span>
+    <span class="title">Problem Definition</span>
+    <span class="num">2 / 11</span>
   </div>
   <div class="slide-body">
     <div class="slide-body-inner">
-      <h2 style="border-bottom:2px solid #1a3a5c; padding-bottom:4px;">What we predict</h2>
+      <p style="font-weight:600; font-size:clamp(0.9rem, 1.8vh, 1.3rem);">Deutsche Bahn delays affect passenger experience, train scheduling, and operational decisions.</p>
       <div class="grid-2">
         <div class="box">
           <h3>Classification</h3>
-          <p style="font-weight:600; margin:2px 0;">Will an ICE stop be delayed &ge; 6 min?</p>
-          <p>Binary: on-time or delayed. Threshold matches Deutsche Bahn's definition of a "significant delay."</p>
-          <p style="color:#666; font-size:clamp(0.7rem, 1.3vh, 1rem);">Primary metrics: F1, ROC-AUC</p>
+          <p style="font-weight:600;">Will an ICE stop have a significant delay (&ge; 6 min)?</p>
+          <p><code>is_delayed = 1 if delay &ge; 6 min</code></p>
+          <p style="color:#666;">&rarr; Early warning system</p>
         </div>
         <div class="box">
           <h3>Regression</h3>
-          <p style="font-weight:600; margin:2px 0;">How many minutes late?</p>
-          <p>Continuous: -5 (early) to 298 minutes late. MAE is directly interpretable in minutes.</p>
-          <p style="color:#666; font-size:clamp(0.7rem, 1.3vh, 1rem);">Primary metrics: MAE, RMSE</p>
+          <p style="font-weight:600;">How many minutes late?</p>
+          <p><code>delay_in_min = actual - planned</code></p>
+          <p style="color:#666;">&rarr; Estimate delay severity</p>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:0;">
+        <div class="highlight" style="margin:0;">
+          <strong>RQ1</strong> &mdash; Can ICE delays be predicted using operational information?<br>
+          <strong>RQ2</strong> &mdash; Does adding weather data improve prediction?<br>
+          <strong>RQ3</strong> &mdash; Which weather conditions influence delays?
+        </div>
+        <div class="highlight" style="margin:0;">
+          <strong>H1</strong> &mdash; Precipitation increases delay probability<br>
+          <strong>H2</strong> &mdash; Operational features are stronger predictors than weather alone
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: DATA SOURCES -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">Data Sources</span>
+    <span class="num">3 / 11</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="grid-2">
+        <div class="box">
+          <h3>Deutsche Bahn Operational Data</h3>
+          <p><span class="tag">Hugging Face</span><span class="tag">CC BY 4.0</span></p>
+          <p>Full dataset: 54.8 GB across many months. We use <strong>July 2024</strong> as a focused subset.</p>
+          <table>
+            <tr><td>Train type</td><td><strong>ICE</strong> (filtered from all types)</td></tr>
+            <tr><td>Stops</td><td><strong>158K</strong> ICE stops extracted</td></tr>
+            <tr><td>Stations</td><td><strong>95</strong></td></tr>
+            <tr><td>Trains</td><td><strong>812</strong> unique ICE trains</td></tr>
+          </table>
+        </div>
+        <div class="box">
+          <h3>One Row = One Stop</h3>
+          <p>Each row records one ICE train stopping at one station at a planned departure time.</p>
+          <div style="background:#eef4fa; border-radius:4px; padding:0.6vh 1vw; font-family:monospace; font-size:clamp(0.7rem, 1.3vh, 1rem); margin-top:4px;">
+            ICE 597<br>
+            Berlin Hbf<br>
+            Planned: 2024-07-15 14:30<br>
+            Delay: 8 minutes
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: WEATHER INTEGRATION -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">Weather Data Integration</span>
+    <span class="num">4 / 11</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="grid-2">
+        <div class="box">
+          <h3>Open-Meteo Historical Weather</h3>
+          <p><span class="tag">Free API</span><span class="tag">Hourly</span></p>
+          <p>Variables: temperature, precipitation, wind speed, cloud cover, humidity, pressure.</p>
+          <p style="margin-top:4px;"><strong>Challenge:</strong> DB data has station IDs but no coordinates.</p>
+        </div>
+        <div class="box">
+          <h3>Geocoding Pipeline</h3>
+          <div class="flow">
+            <span class="flow-step">EVA ID</span>
+            <span class="flow-arrow">&rarr;</span>
+            <span class="flow-step">Nominatim</span>
+            <span class="flow-arrow">&rarr;</span>
+            <span class="flow-step">Lat/Lon</span>
+            <span class="flow-arrow">&rarr;</span>
+            <span class="flow-step">Open-Meteo</span>
+            <span class="flow-arrow">&rarr;</span>
+            <span class="flow-step">Weather</span>
+          </div>
         </div>
       </div>
       <div class="highlight">
-        <strong>Why both?</strong> Operators need to know <em>whether</em> to trigger mitigations and <em>how much</em> delay to communicate. Three research questions: RQ1 (operational features only), RQ2 (does weather improve prediction?), RQ3 (which weather variables matter?).
+        <strong>Merge:</strong> LEFT JOIN on <code>station + planned departure hour</code>. Planned time used &mdash; actual departure time would leak the target. <strong>90.35%</strong> merge success (132,268 of 146,389 rows matched weather).
       </div>
+      <table>
+        <tr><th>Step</th><th>Result</th></tr>
+        <tr><td>ICE stops before merge</td><td>146,389</td></tr>
+        <tr><td>Weather-matched</td><td>132,268 (90.35%)</td></tr>
+        <tr><td>Without departure time</td><td>14,121 (flagged, not dropped)</td></tr>
+      </table>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 3: DATA -->
+<!-- SLIDE 5: EDA - DELAY DISTRIBUTION -->
 <div class="slide">
   <div class="slide-header">
-    <span class="title">2. The Data</span>
-    <span class="num">3 / 9</span>
-  </div>
-  <div class="slide-body">
-    <div class="slide-body-inner">
-      <p style="font-weight:600; font-size:clamp(0.85rem, 1.8vh, 1.3rem);">One row = one ICE train stop at one station on one planned schedule.</p>
-      <div class="grid-2">
-        <div class="box">
-          <h3>Deutsche Bahn</h3>
-          <p><span class="tag">Hugging Face</span><span class="tag">54.8 GB</span><span class="tag">187M rows</span></p>
-          <p>Monthly Parquet shards. July 2024: ~2M rows &rarr; <strong>158K ICE rows</strong> (7.87% of trains). 17 columns: timestamps, station IDs, delay, cancellations, route.</p>
-        </div>
-        <div class="box">
-          <h3>Open-Meteo Weather</h3>
-          <p><span class="tag">Archive API</span><span class="tag">Hourly</span><span class="tag">Free</span></p>
-          <p>95 stations &times; 744 hours = 70,680 rows. 8 variables: temperature, precipitation, rain, snowfall, windspeed, windgusts, weather code, visibility.</p>
-        </div>
-      </div>
-      <div class="grid-4">
-        <div class="box" style="padding:clamp(8px, 1vh, 16px); text-align:center;"><span class="num">146,389</span><span class="label">Cleaned rows</span></div>
-        <div class="box" style="padding:clamp(8px, 1vh, 16px); text-align:center;"><span class="num">95</span><span class="label">Stations</span></div>
-        <div class="box" style="padding:clamp(8px, 1vh, 16px); text-align:center;"><span class="num">812</span><span class="label">Unique trains</span></div>
-        <div class="box" style="padding:clamp(8px, 1vh, 16px); text-align:center;"><span class="num">32</span><span class="label">Features merged</span></div>
-      </div>
-      <div class="highlight">
-        <strong>Join:</strong> Geocode EVA station IDs &rarr; lat/lon via Nominatim. LEFT JOIN on (station + departure_planned_hour). Planned time avoids target leakage. <strong>90.35%</strong> weather match rate.
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 4: CLEANING -->
-<div class="slide">
-  <div class="slide-header">
-    <span class="title">3. Data Cleaning</span>
-    <span class="num">4 / 9</span>
+    <span class="title">Exploratory Analysis — Delays</span>
+    <span class="num">5 / 11</span>
   </div>
   <div class="slide-body">
     <div class="slide-body-inner">
       <div class="grid-2">
         <div class="box">
-          <h3>Canceled stops removed</h3>
-          <p><strong>11,497 rows (7.28%).</strong> You cannot predict delay for trips that never ran.</p>
-        </div>
-        <div class="box">
-          <h3>Null station names filled</h3>
-          <p>Filled from <code>xml_station_name</code>. Dropping would lose station identity, a key feature.</p>
-        </div>
-        <div class="box">
-          <h3>Target leakage excluded</h3>
-          <p><code>arrival_change_time</code> and <code>departure_change_time</code> encode the actual delay &mdash; including them would leak the target.</p>
-        </div>
-        <div class="box">
-          <h3>Redundant columns dropped</h3>
-          <p><code>rain</code>: r=1.0 with precipitation. <code>snowfall</code>: zero variance in July (all 0s).</p>
-        </div>
-      </div>
-      <div class="highlight">
-        <strong>Challenge:</strong> All 5 timestamp columns were naive (no timezone). Standardized to <code>Europe/Berlin</code>. 14,121 rows without <code>departure_planned_time</code> flagged as non-mergeable.
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 5: EDA -->
-<div class="slide">
-  <div class="slide-header">
-    <span class="title">4. Exploratory Data Analysis</span>
-    <span class="num">5 / 9</span>
-  </div>
-  <div class="slide-body">
-    <div class="slide-body-inner">
-      <div class="grid-2">
-        <div class="box">
-          <h3>Delay Distribution</h3>
-          <p>Right-skewed. Median 4 min, mean 10.6 min. 95th: 44.6 min. Max: 298 min.</p>
-          <div class="bar-chart">
-            <div class="bar" style="height:100%; background:#4CAF50;"><span class="bar-label">0-6 min</span><span class="bar-val">57.7%</span></div>
-            <div class="bar" style="height:60%; background:#2196F3;"><span class="bar-label">6-30 min</span><span class="bar-val">28.4%</span></div>
-            <div class="bar" style="height:30%; background:#FF9800;"><span class="bar-label">30-60 min</span><span class="bar-val">9.1%</span></div>
-            <div class="bar" style="height:10%; background:#f44336;"><span class="bar-label">&gt;60 min</span><span class="bar-val">4.8%</span></div>
+          <h3>Class Balance</h3>
+          <div style="display:flex; height:clamp(22px, 4vh, 40px); border-radius:3px; overflow:hidden; margin:0.3em 0;">
+            <div style="flex:57.68; background:#4CAF50; display:flex; align-items:center; justify-content:center; font-size:clamp(0.55rem, 1.2vh, 0.85rem); font-weight:600; color:#fff;">57.7% On time</div>
+            <div style="flex:42.32; background:#f44336; display:flex; align-items:center; justify-content:center; font-size:clamp(0.55rem, 1.2vh, 0.85rem); font-weight:600; color:#fff;">42.3% Delayed</div>
           </div>
+          <p>Imbalance ratio: <strong>1.36:1</strong>. This is manageable but accuracy alone is misleading (always "on-time" = 57.7%).</p>
         </div>
         <div class="box">
-          <h3>Class Balance (&ge;6 min)</h3>
-          <div class="balance-bar">
-            <div style="flex:57.68; background:#4CAF50;">57.7% on-time</div>
-            <div style="flex:42.32; background:#f44336;">42.3% delayed</div>
-          </div>
-          <p>Ratio 1.36:1 &mdash; manageable. Accuracy misleading (always on-time = 57.7%).</p>
-        </div>
-        <div class="box">
-          <h3>Weather Correlations</h3>
-          <p>All Pearson r &lt; 0.15 (linear).</p>
-          <div class="corr-row"><span>temperature_2m</span><div class="corr-bar" style="width:clamp(30px, 8vw, 100px);"></div><span>r = 0.137</span></div>
-          <div class="corr-row"><span>windgusts_10m</span><div class="corr-bar" style="width:clamp(6px, 1.5vw, 20px);"></div><span>r = 0.008</span></div>
-          <div class="corr-row"><span>precipitation</span><div class="corr-bar" style="width:clamp(4px, 1.2vw, 16px);"></div><span>r = 0.006</span></div>
-          <p style="margin-top:2px;">Effects are non-linear. Tree models capture these naturally.</p>
-        </div>
-        <div class="box">
-          <h3>Precipitation Effect (H1)</h3>
-          <p>Delay rate: 41.6% (dry) &rarr; ~44.5% (wet).</p>
-          <div class="corr-row"><span>Dry (0 mm)</span><div class="corr-bar" style="width:clamp(40px, 9vw, 110px);"></div><span>41.6%</span></div>
-          <div class="corr-row"><span>Light (&lt;0.5 mm)</span><div class="corr-bar" style="width:clamp(44px, 10vw, 120px);"></div><span>45.0%</span></div>
-          <div class="corr-row"><span>Heavy (&gt;2 mm)</span><div class="corr-bar" style="width:clamp(43px, 9.5vw, 118px);"></div><span>44.4%</span></div>
-          <p style="margin-top:2px;"><strong>H1 supported:</strong> precipitation increases delay probability.</p>
+          <h3>Delay Severity</h3>
+          <table>
+            <tr><td>Mean delay</td><td><strong>10.57 min</strong></td></tr>
+            <tr><td>Median</td><td><strong>4 min</strong></td></tr>
+            <tr><td>Maximum</td><td><strong>298 min</strong></td></tr>
+            <tr><td>95th percentile</td><td>44.6 min</td></tr>
+          </table>
+          <p>Distribution is right-skewed &mdash; most delays are moderate but severe delays exist.</p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 6: BASELINES & METRICS -->
+<!-- SLIDE 6: EDA - WEATHER -->
 <div class="slide">
   <div class="slide-header">
-    <span class="title">5. Baselines &amp; Metrics</span>
-    <span class="num">6 / 9</span>
+    <span class="title">Exploratory Analysis — Weather</span>
+    <span class="num">6 / 11</span>
   </div>
   <div class="slide-body">
     <div class="slide-body-inner">
-      <p>Every model must beat a naive baseline before we consider it useful.</p>
       <div class="grid-2">
         <div class="box">
-          <h3>Classification</h3>
-          <div style="background:#eef4fa; padding:clamp(4px, 0.8vh, 12px) clamp(8px, 1vw, 18px); margin:4px 0; border-radius:3px;">
-            <strong>Naive baseline:</strong> Always predict "on-time" &rarr; <strong>57.7% accuracy</strong>
-          </div>
-          <p><strong>Primary: F1-score and ROC-AUC.</strong></p>
-          <p>Accuracy is misleading. A model at 60% accuracy is barely above naive. F1 balances precision and recall; ROC-AUC evaluates across all thresholds.</p>
+          <h3>Correlation with Delay</h3>
+          <table>
+            <tr><th>Feature</th><th>Correlation (r)</th></tr>
+            <tr><td>Temperature</td><td>0.137</td></tr>
+            <tr><td>Precipitation</td><td>&lt; 0.01</td></tr>
+            <tr><td>Wind gusts</td><td>&lt; 0.01</td></tr>
+          </table>
+          <p>Linear correlation is very weak across all weather variables.</p>
         </div>
         <div class="box">
-          <h3>Regression</h3>
-          <div style="background:#eef4fa; padding:clamp(4px, 0.8vh, 12px) clamp(8px, 1vw, 18px); margin:4px 0; border-radius:3px;">
-            <strong>Naive baseline:</strong> Always predict mean (10.57 min) &rarr; <strong>MAE ~13.5 min</strong>
-          </div>
-          <p><strong>Primary: MAE and RMSE.</strong></p>
-          <p>MAE interpretable in minutes. RMSE penalizes large errors (severe delays). R&sup2; as secondary.</p>
+          <h3>Non-linear Effect</h3>
+          <p>Delay rate by precipitation:</p>
+          <table>
+            <tr><th>Condition</th><th>Delay rate</th></tr>
+            <tr><td>Dry (0 mm)</td><td>41.6%</td></tr>
+            <tr><td>Rain (&gt; 0 mm)</td><td>~44.5%</td></tr>
+          </table>
+          <p>Weather effect exists but is <strong>non-linear</strong>. This is why tree-based models (Random Forest, XGBoost) are likely better candidates than linear models.</p>
         </div>
       </div>
       <div class="highlight">
-        <strong>Evaluation:</strong> Time-based (chronological) split &mdash; prevents temporal leakage. <strong>Ablation study:</strong> same model with vs without weather features &rarr; answers RQ2.
+        <strong>H1 supported:</strong> Precipitation increases delay probability (41.6% &rarr; ~44.5%). Linear models would miss this step-function pattern.
       </div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 7: DESIGN DECISIONS -->
+<!-- SLIDE 7: DATA CLEANING -->
 <div class="slide">
   <div class="slide-header">
-    <span class="title">Key Design Decisions</span>
-    <span class="num">7 / 9</span>
+    <span class="title">Data Cleaning</span>
+    <span class="num">7 / 11</span>
   </div>
   <div class="slide-body">
     <div class="slide-body-inner">
-      <div class="grid-3">
-        <div class="box">
-          <p style="font-size:clamp(1rem, 2.4vh, 1.8rem); font-weight:700; color:#1a3a5c;">6 min</p>
-          <span class="label">Delay threshold</span>
-          <p>Aligned with DB's "significant delay." 5 min too noisy, 15 min too few cases.</p>
-        </div>
-        <div class="box">
-          <p style="font-size:clamp(1rem, 2.4vh, 1.8rem); font-weight:700; color:#1a3a5c;">Time split</p>
-          <span class="label">Train/test split</span>
-          <p>Chronological, not random. Random leaks future into past. Mirrors real deployment.</p>
-        </div>
-        <div class="box">
-          <p style="font-size:clamp(1rem, 2.4vh, 1.8rem); font-weight:700; color:#1a3a5c;">July only</p>
-          <span class="label">Project scope</span>
-          <p>Single-month proof-of-concept. Pipeline parameterized by date for easy extension.</p>
-        </div>
-        <div class="box">
-          <p style="font-size:clamp(1rem, 2.4vh, 1.8rem); font-weight:700; color:#1a3a5c;">ICE only</p>
-          <span class="label">Train type</span>
-          <p>High-profile long-distance. No confounding from different operational profiles.</p>
-        </div>
-        <div class="box">
-          <p style="font-size:clamp(1rem, 2.4vh, 1.8rem); font-weight:700; color:#1a3a5c;">Planned time</p>
-          <span class="label">Merge column</span>
-          <p>Used <code>departure_planned_time</code>. Actual times encode the delay &mdash; target leakage.</p>
-        </div>
-        <div class="box">
-          <p style="font-size:clamp(1rem, 2.4vh, 1.8rem); font-weight:700; color:#1a3a5c;">LEFT JOIN</p>
-          <span class="label">Merge type</span>
-          <p>Preserves all rows. Inner join silently drops 14K rows without weather.</p>
-        </div>
-      </div>
+      <p>Raw ICE data: <strong>158K rows</strong> &rarr; <strong>146K clean rows</strong></p>
+      <table>
+        <tr><th>Issue</th><th>Action</th><th>Rows affected</th><th>Rationale</th></tr>
+        <tr><td>Cancelled trains</td><td>Removed</td><td>11,497</td><td>No delay value to predict</td></tr>
+        <tr><td>Timestamp timezone</td><td>Converted to Europe/Berlin</td><td>All 158K</td><td>Original timestamps were naive</td></tr>
+        <tr><td>Null station names</td><td>Filled from mapping</td><td>&lt; 1K</td><td>Station is a key feature</td></tr>
+        <tr><td>Missing weather</td><td>Kept as nulls</td><td>14,121</td><td>Dropping would hide data issues</td></tr>
+        <tr><td>Target leakage</td><td>Excluded columns</td><td>&mdash;</td><td>Actual arrival/departure times encode the delay</td></tr>
+        <tr><td>Redundant columns</td><td>Dropped</td><td>&mdash;</td><td><code>rain</code> (r=1.0 with precip), <code>snowfall</code> (zero variance)</td></tr>
+      </table>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 8: DIRECTION -->
+<!-- SLIDE 8: BASELINE & EVALUATION -->
 <div class="slide">
   <div class="slide-header">
-    <span class="title">6. Direction</span>
-    <span class="num">8 / 9</span>
+    <span class="title">Baseline &amp; Evaluation Plan</span>
+    <span class="num">8 / 11</span>
   </div>
   <div class="slide-body">
     <div class="slide-body-inner">
       <div class="grid-2">
         <div class="box">
-          <h3>Immediate (Notebooks 06-07)</h3>
+          <h3>Baseline Model</h3>
+          <div style="background:#eef4fa; padding:clamp(4px, 0.8vh, 12px); border-radius:3px; margin:4px 0;">
+            <p style="margin:0;"><strong>Majority Class Predictor</strong> &mdash; Always predict "On Time"</p>
+            <p style="margin:0; font-weight:600;">Expected accuracy: ~57.7%</p>
+          </div>
+          <p>This is not useful operationally &mdash; it never catches a delay. Every real model must beat this.</p>
+        </div>
+        <div class="box">
+          <h3>Classification Metrics</h3>
+          <p><strong>Primary: F1 Score</strong></p>
+          <p>Why? Classes are imbalanced (57.7% vs 42.3%). Accuracy is misleading. F1 balances precision and recall.</p>
+          <p><strong>Also: ROC-AUC</strong> for ranking prediction quality.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="box">
+          <h3>Regression Metrics</h3>
+          <p><strong>MAE</strong> &mdash; Average error in minutes, directly interpretable for passengers.</p>
+          <p><strong>RMSE</strong> &mdash; Penalizes large delay mistakes. A model with MAE 8 min but RMSE 25 min is unreliable on severe delays.</p>
+        </div>
+        <div class="box">
+          <h3>Evaluation Protocol</h3>
+          <p><strong>Time-based split:</strong> Chronological, no random shuffle &mdash; prevents temporal leakage.</p>
+          <p><strong>Ablation study:</strong> Same algorithm with vs without weather features &rarr; directly answers RQ2.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: NEXT STEPS -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">Next Steps — ML Pipeline</span>
+    <span class="num">9 / 11</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="grid-2">
+        <div class="box">
+          <h3>Feature Engineering (Notebook 06)</h3>
+          <p><strong>Operational:</strong> train type, station, hour, day of week, route info</p>
+          <p><strong>Weather:</strong> temperature, precipitation, wind</p>
+        </div>
+        <div class="box">
+          <h3>Models (Notebooks 07-08)</h3>
+          <p><strong>Baseline:</strong> Logistic Regression, Linear Regression</p>
+          <p><strong>Advanced:</strong> Random Forest, XGBoost</p>
+        </div>
+      </div>
+      <div class="highlight">
+        <strong>Research Experiment:</strong> Model A (operational only) vs Model B (operational + weather). This comparison answers RQ2 &mdash; does weather improve prediction?
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: CODE REVIEW -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">Code Structure &amp; Quality</span>
+    <span class="num">10 / 11</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="grid-2">
+        <div class="box">
+          <h3>Pipeline Design</h3>
+          <div class="flow" style="justify-content:flex-start;">
+            <span class="flow-step">Acquire</span>
+            <span class="flow-arrow">&darr;</span>
+            <span class="flow-step">Clean</span>
+            <span class="flow-arrow">&darr;</span>
+            <span class="flow-step">Integrate</span>
+            <span class="flow-arrow">&darr;</span>
+            <span class="flow-step">Analyze</span>
+            <span class="flow-arrow">&darr;</span>
+            <span class="flow-step">Model</span>
+          </div>
+          <p>Each notebook has one responsibility. Outputs Parquet files for the next step. No hardcoded paths.</p>
+        </div>
+        <div class="box">
+          <h3>Challenges Solved</h3>
+          <table>
+            <tr><th>Challenge</th><th>Solution</th></tr>
+            <tr><td>54 GB dataset</td><td>Parquet + chunked reading</td></tr>
+            <tr><td>Missing coordinates</td><td>Nominatim geocoding</td></tr>
+            <tr><td>Weather matching</td><td>Hour-level merge on planned time</td></tr>
+            <tr><td>Leakage risk</td><td>Planned timestamps only</td></tr>
+            <tr><td>Class imbalance</td><td>F1 / ROC-AUC evaluation</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: KEY TAKEAWAYS -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">What We Achieved</span>
+    <span class="num">11 / 11</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="grid-2">
+        <div class="box">
+          <h3>Built</h3>
           <ul>
-            <li>Feature engineering: encode categoricals, drop leakage/redundant columns</li>
-            <li>Create <code>is_delayed</code> target (delay &ge; 6 min)</li>
-            <li>Time-based train/test split</li>
-            <li><strong>Baseline models:</strong> Logistic Regression, Decision Tree, Linear Regression</li>
+            <li>End-to-end ML pipeline from raw data to modeling</li>
+            <li>Integrated DB operational data with Open-Meteo weather</li>
+            <li>Cleaned and analyzed 146K ICE stops across 95 stations</li>
           </ul>
         </div>
         <div class="box">
-          <h3>Next (Notebooks 08-10)</h3>
+          <h3>Discovered</h3>
           <ul>
-            <li><strong>Advanced:</strong> Random Forest, XGBoost</li>
-            <li><strong>Ablation (RQ2):</strong> same model with vs without weather</li>
-            <li>Hyperparameter tuning via cross-validation</li>
-            <li><strong>SHAP (RQ3):</strong> which weather variables matter</li>
+            <li>42.3% of ICE stops are delayed (&ge; 6 min)</li>
+            <li>Weather has a weak but non-linear effect on delays</li>
+            <li>Precipitation increases delay rate by ~3 percentage points</li>
           </ul>
         </div>
       </div>
       <div class="highlight">
-        <strong>Strategy:</strong>
-        <span class="tag">Operational-only &rarr; RQ1</span>
-        <span class="tag">Full model &rarr; RQ2</span>
-        <span class="tag">Ablation &rarr; weather contribution</span>
-        <span class="tag">SHAP &rarr; RQ3</span><br>
-        <strong>Hypotheses:</strong> H1 (precipitation &rarr; delay) &mdash; supported. H2 (wind gusts) &mdash; weakly supported. H3 (weather improves prediction) &mdash; to test via ablation.
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 9: CODE REVIEW -->
-<div class="slide">
-  <div class="slide-header">
-    <span class="title">7. Code Review</span>
-    <span class="num">9 / 9</span>
-  </div>
-  <div class="slide-body">
-    <div class="slide-body-inner">
-      <div class="grid-2">
-        <div class="box">
-          <h3>Pipeline Architecture</h3>
-          <p>Five sequential Jupyter notebooks, each outputs a Parquet file for the next:</p>
-          <p style="margin:4px 0;">
-            <span class="tag">01 Define</span> &rarr;
-            <span class="tag">02 Acquire</span> &rarr;
-            <span class="tag">03 Clean</span> &rarr;
-            <span class="tag">04 Integrate</span> &rarr;
-            <span class="tag">05 Explore</span>
-          </p>
-          <p>Each reads config from <code>data/reference/*.json</code> and writes a JSON report. No hardcoded paths. Fully reproducible.</p>
-        </div>
-        <div class="box">
-          <h3>What's Special</h3>
-          <ul>
-            <li><strong>Config-driven:</strong> 21 JSON files define data dictionaries, merge strategies, cleaning rules, per-notebook reports. Full audit trail without a database.</li>
-            <li><strong>Streaming Parquet:</strong> 54.8 GB DB read in 100K-row chunks via PyArrow. Output: 5.2 MB ICE subset.</li>
-            <li><strong>Auto-reports:</strong> Every notebook writes a structured JSON summary. Rerun any notebook to regenerate.</li>
-            <li><strong>Decoupled slides:</strong> Standalone HTML in separate repo, deployable via Netlify.</li>
-          </ul>
-        </div>
+        <strong>Next goal:</strong> Build and compare ML models to predict ICE delays &mdash; with and without weather features.
       </div>
     </div>
   </div>
@@ -440,7 +480,7 @@
 </div>
 
 <div class="nav-hint">
-  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navigate &nbsp;&bull;&nbsp; <span id="slideIndicator">Slide 1 of 9</span>
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navigate &nbsp;&bull;&nbsp; <span id="slideIndicator">Slide 1 of 11</span>
 </div>
 
 <script>
