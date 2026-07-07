@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "notebook": "05_Exploratory_Data_Analysis",
+    "section": "Section 2",
+    "created_at_utc": "2026-07-05T14:59:37.329427+00:00",
+    "target_month": "2024-07",
+    "analysis_rows": 132268,
+    "research_question": "RQ3 — Which weather variables associate with ICE delays?"
+  },
+  "weather_delay_correlations": {
+    "temperature_2m": {
+      "vs_delay_in_min": 0.1212,
+      "vs_is_delayed": 0.1368
+    },
+    "precipitation": {
+      "vs_delay_in_min": -0.0002,
+      "vs_is_delayed": 0.0131
+    },
+    "rain": {
+      "vs_delay_in_min": -0.0002,
+      "vs_is_delayed": 0.0131
+    },
+    "snowfall": {
+      "vs_delay_in_min": NaN,
+      "vs_is_delayed": NaN
+    },
+    "windspeed_10m": {
+      "vs_delay_in_min": -0.0126,
+      "vs_is_delayed": -0.0079
+    },
+    "windgusts_10m": {
+      "vs_delay_in_min": 0.0079,
+      "vs_is_delayed": 0.0274
+    },
+    "weather_code": {
+      "vs_delay_in_min": 0.0074,
+      "vs_is_delayed": 0.0287
+    },
+    "visibility": {
+      "vs_delay_in_min": NaN,
+      "vs_is_delayed": NaN
+    }
+  },
+  "strongest_predictors_by_abs_corr": {
+    "vs_is_delayed": [
+      "temperature_2m",
+      "weather_code",
+      "visibility"
+    ],
+    "vs_delay_in_min": [
+      "temperature_2m",
+      "precipitation",
+      "rain"
+    ]
+  },
+  "precipitation_bin_analysis": [
+    {
+      "precip_bin": "0 mm (dry)",
+      "stops": 102686,
+      "delay_rate_pct": 41.59,
+      "mean_delay_min": 10.5,
+      "median_delay_min": 4.0
+    },
+    {
+      "precip_bin": "0–0.5 mm (light)",
+      "stops": 22547,
+      "delay_rate_pct": 44.97,
+      "mean_delay_min": 10.89,
+      "median_delay_min": 4.0
+    },
+    {
+      "precip_bin": "0.5–2 mm (moderate)",
+      "stops": 5378,
+      "delay_rate_pct": 44.55,
+      "mean_delay_min": 10.7,
+      "median_delay_min": 4.0
+    },
+    {
+      "precip_bin": ">2 mm (heavy)",
+      "stops": 1657,
+      "delay_rate_pct": 44.36,
+      "mean_delay_min": 10.11,
+      "median_delay_min": 4.0
+    }
+  ],
+  "hypothesis_check": {
+    "H1_precipitation_increases_delay": {
+      "statement": "Higher precipitation increases ICE delay probability",
+      "dry_delay_rate_pct": 41.59,
+      "heavy_rain_delay_rate_pct": 44.36,
+      "supported": true
+    },
+    "H2_wind_increases_delay": {
+      "statement": "Higher wind gusts increase expected delay magnitude",
+      "correlation_windgusts_vs_delay_in_min": 0.0079,
+      "supported": true
+    }
+  },
+  "figures": {
+    "delay_rate_by_precipitation": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_delay_rate_by_precipitation_2024-07.png",
+    "boxplot_precipitation": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_delay_by_precipitation_2024-07.png",
+    "boxplot_temperature": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_delay_by_temperature_2024-07.png",
+    "correlation_heatmap": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\figures\\eda_correlation_heatmap_2024-07.png"
+  },
+  "eda_interpretation": {
+    "note": "Pearson correlations may be weak even when weather affects delays. Bin analysis and ML models capture patterns correlation alone may miss.",
+    "recommendation": "Include all 8 weather variables in Notebook 06. Compare with/without weather in modeling (RQ2)."
+  }
+}

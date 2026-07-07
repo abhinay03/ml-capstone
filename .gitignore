@@ -1,2 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large processed data (regenerate from notebooks — do not commit raw 54 GB DB data)
+Notebooks/data/processed/*.parquet
+
+# Hugging Face / download caches
+.cache/
+huggingface/
+
+# OS & IDE
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/

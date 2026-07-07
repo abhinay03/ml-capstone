@@ -1,0 +1,267 @@
+{
+  "metadata": {
+    "notebook": "01_Project_Definition_and_Data_Understanding",
+    "section": "Section 5",
+    "created_at_utc": "2026-07-05T12:10:38.478904+00:00",
+    "implemented_in": "Notebook 04 — Data Integration",
+    "depends_on": [
+      "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\project_config.json",
+      "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\research_framework.json",
+      "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\db_data_dictionary.json",
+      "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\weather_data_dictionary.json"
+    ]
+  },
+  "pipeline_steps": [
+    {
+      "step": 1,
+      "notebook": "02",
+      "action": "Load monthly Parquet from Hugging Face",
+      "input": "hf://datasets/piebro/deutsche-bahn-data/monthly_processed_data/data-YYYY-MM.parquet",
+      "output": "data/processed/ice_raw_YYYY-MM.parquet"
+    },
+    {
+      "step": 2,
+      "notebook": "02",
+      "action": "Filter train_type == 'ICE'",
+      "input": "raw monthly parquet",
+      "output": "ICE-only subset saved to disk"
+    },
+    {
+      "step": 3,
+      "notebook": "03",
+      "action": "Standardize all timestamps to 24h datetime, timezone Europe/Berlin",
+      "columns": [
+        "time",
+        "arrival_planned_time",
+        "arrival_change_time",
+        "departure_planned_time",
+        "departure_change_time"
+      ],
+      "output": "data/processed/ice_cleaned_YYYY-MM.parquet"
+    },
+    {
+      "step": 4,
+      "notebook": "04",
+      "action": "Geocode unique eva station IDs to latitude/longitude",
+      "input": "unique eva values from ICE data",
+      "output": "data/reference/station_coordinates.json",
+      "api": "Open-Meteo Geocoding API or Nominatim (documented in Notebook 04)"
+    },
+    {
+      "step": 5,
+      "notebook": "04",
+      "action": "Fetch hourly weather per station-month from Open-Meteo Archive",
+      "input": "station coordinates + date range",
+      "output": "data/processed/weather_YYYY-MM.parquet",
+      "cache_rule": "Cache per station-month to avoid repeated API calls"
+    },
+    {
+      "step": 6,
+      "notebook": "04",
+      "action": "Create merge keys on both sides",
+      "railway_key": "eva + departure_planned_hour",
+      "weather_key": "latitude + longitude + hourly.time"
+    },
+    {
+      "step": 7,
+      "notebook": "04",
+      "action": "Left join weather onto railway rows",
+      "output": "data/processed/ice_weather_merged_YYYY-MM.parquet"
+    },
+    {
+      "step": 8,
+      "notebook": "04",
+      "action": "Run validation checks (see validation_checks below)",
+      "output": "data/reference/merge_validation_report.json"
+    }
+  ],
+  "merge_keys": {
+    "railway_side": {
+      "station_key": {
+        "source_column": "eva",
+        "transform": "lookup eva in station_coordinates.json → latitude, longitude",
+        "why": "Railway data has eva but no coordinates; weather API needs lat/lon"
+      },
+      "time_key": {
+        "source_column": "departure_planned_time",
+        "transform": "floor to hour in Europe/Berlin timezone",
+        "output_column": "departure_planned_hour",
+        "why": "Open-Meteo returns hourly data. Planned departure (not actual) avoids target leakage."
+      }
+    },
+    "weather_side": {
+      "location_key": {
+        "columns": [
+          "latitude",
+          "longitude"
+        ],
+        "note": "API may snap coords to weather grid — use returned values"
+      },
+      "time_key": {
+        "column": "time",
+        "format": "YYYY-MM-DDTHH:00 in Europe/Berlin",
+        "source": "hourly.time from Open-Meteo response"
+      }
+    },
+    "join_condition": "railway.latitude  == weather.latitude AND railway.longitude == weather.longitude AND railway.departure_planned_hour == weather.time",
+    "join_type": "left",
+    "join_type_rationale": "Keep all ICE railway rows. Rows without weather match are flagged, not dropped."
+  },
+  "merge_key_justification": {
+    "eva_not_station_name": "eva is a standardized numeric ID; station_name can be null or inconsistent",
+    "departure_planned_not_actual": "Using arrival_change_time or departure_change_time would leak the delay outcome into the features — the actual time IS the delay",
+    "hour_not_minute": "Weather variables are hourly aggregates; minute-level join would require interpolation not supported by the API",
+    "left_not_inner": "Inner join would silently drop stops with missing weather, hiding data quality problems"
+  },
+  "validation_checks": [
+    {
+      "check": "merge_rate",
+      "rule": "≥ 90% of ICE rows have non-null weather values",
+      "action_if_fail": "Investigate missing geocoding or date range gaps"
+    },
+    {
+      "check": "no_duplicate_row_keys",
+      "rule": "id column must be unique after merge",
+      "action_if_fail": "Inspect join — weather side may have duplicate hours"
+    },
+    {
+      "check": "timezone_consistency",
+      "rule": "All timestamps in Europe/Berlin; no mixed UTC/local",
+      "action_if_fail": "Re-run Notebook 03 standardization"
+    },
+    {
+      "check": "no_target_leakage",
+      "rule": "Features must not include arrival_change_time, departure_change_time, or delay_in_min",
+      "action_if_fail": "Remove leaky columns before modeling in Notebook 06"
+    },
+    {
+      "check": "weather_null_pattern",
+      "rule": "Null weather should be random (geocoding gaps), not systematic by route",
+      "action_if_fail": "Fix geocoding for affected stations"
+    },
+    {
+      "check": "row_count_preserved",
+      "rule": "Row count after left join == row count before join",
+      "action_if_fail": "Join created duplicates — inspect weather cache"
+    }
+  ],
+  "expected_merged_columns": {
+    "railway_columns": [
+      {
+        "name": "station_name",
+        "dtype": "string",
+        "role": "station label (nullable)"
+      },
+      {
+        "name": "xml_station_name",
+        "dtype": "string",
+        "role": "API/XML station name"
+      },
+      {
+        "name": "eva",
+        "dtype": "string",
+        "role": "EVA station ID — geocoding key"
+      },
+      {
+        "name": "train_number",
+        "dtype": "string",
+        "role": "train service number"
+      },
+      {
+        "name": "line_number",
+        "dtype": "string",
+        "role": "line ID (nullable)"
+      },
+      {
+        "name": "final_destination_station",
+        "dtype": "string",
+        "role": "route endpoint"
+      },
+      {
+        "name": "delay_in_min",
+        "dtype": "int32",
+        "role": "regression target"
+      },
+      {
+        "name": "time",
+        "dtype": "timestamp",
+        "role": "record reference time"
+      },
+      {
+        "name": "is_canceled",
+        "dtype": "bool",
+        "role": "cancellation flag"
+      },
+      {
+        "name": "train_type",
+        "dtype": "string",
+        "role": "filter: ICE only"
+      },
+      {
+        "name": "train_line_ride_id",
+        "dtype": "string",
+        "role": "unique ride ID"
+      },
+      {
+        "name": "train_line_station_num",
+        "dtype": "int32",
+        "role": "stop order on route"
+      },
+      {
+        "name": "arrival_planned_time",
+        "dtype": "timestamp",
+        "role": "scheduled arrival"
+      },
+      {
+        "name": "arrival_change_time",
+        "dtype": "timestamp",
+        "role": "actual/revised arrival"
+      },
+      {
+        "name": "departure_planned_time",
+        "dtype": "timestamp",
+        "role": "scheduled departure"
+      },
+      {
+        "name": "departure_change_time",
+        "dtype": "timestamp",
+        "role": "actual/revised departure"
+      },
+      {
+        "name": "id",
+        "dtype": "string",
+        "role": "unique row ID"
+      }
+    ],
+    "weather_columns": [
+      "temperature_2m",
+      "precipitation",
+      "rain",
+      "snowfall",
+      "windspeed_10m",
+      "windgusts_10m",
+      "weather_code",
+      "visibility"
+    ],
+    "derived_columns": [
+      "departure_planned_hour",
+      "latitude",
+      "longitude",
+      "is_delayed"
+    ]
+  },
+  "columns_excluded_from_features": [
+    "id",
+    "train_line_ride_id",
+    "delay_in_min",
+    "arrival_change_time",
+    "departure_change_time",
+    "is_delayed",
+    "note: delay_in_min is regression TARGET; change times leak the outcome"
+  ],
+  "output_files": {
+    "merged_data_pattern": "data/processed/ice_weather_merged_YYYY-MM.parquet",
+    "station_coords": "data/reference/station_coordinates.json",
+    "validation_report": "data/reference/merge_validation_report.json"
+  }
+}

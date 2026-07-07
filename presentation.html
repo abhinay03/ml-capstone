@@ -21,70 +21,68 @@
   }
 
   .slide-header {
-    background: #1a3a5c; color: #fff;
-    padding: 1.6vh 2.6vw;
-    font-size: clamp(1rem, 2.4vh, 1.8rem);
-    display: flex; justify-content: space-between; align-items: center;
-    flex-shrink: 0;
+    min-height: 9vh; background: #1a3a5c; color: #fff;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5vw; flex-shrink: 0;
   }
-  .slide-header .title { font-weight: 700; }
-  .slide-header .num { font-weight: 700; color: #fff; opacity: 0.65; }
+  .slide-header .title { font-weight: 700; font-size: clamp(1.4rem, 1.77vw, 2.25rem); }
+  .slide-header .num { font-weight: 700; color: #fff; opacity: 0.65; font-size: clamp(0.9rem, 1.1vw, 1.4rem); }
 
   .slide-body {
-    flex: 1; padding: 3vh 2.5vw;
+    flex: 1; padding: 40px;
     display: flex; flex-direction: column; justify-content: center;
-    overflow-y: auto;
+    overflow: hidden;
   }
   .slide-body-inner {
     max-width: 1200px; margin: 0 auto; width: 100%;
     display: flex; flex-direction: column;
-    gap: clamp(4px, 0.8vh, 16px);
+    gap: 24px;
   }
 
   .slide.center { justify-content: center; align-items: center; text-align: center; }
-  .slide.center .slide-body { justify-content: center; align-items: center; }
-  .slide.center .slide-body-inner { display: flex; flex-direction: column; align-items: center; gap: 0.6vh; }
+  .slide.center .slide-body { justify-content: center; align-items: center; padding: 40px; }
+  .slide.center .slide-body-inner { display: flex; flex-direction: column; align-items: center; gap: 24px; }
   .slide.center .slide-header { display: none; }
 
-  h1 { font-size: clamp(1.8rem, 5.5vh, 4rem); font-weight: 700; color: #1a3a5c; }
-  h2 { font-size: clamp(1.3rem, 3.2vh, 2.4rem); font-weight: 600; color: #1a3a5c; }
-  h3 { font-size: clamp(0.9rem, 2vh, 1.4rem); font-weight: 600; color: #1a3a5c; }
-  p { font-size: clamp(0.85rem, 1.8vh, 1.3rem); color: #333; line-height: 1.4; }
-  .subtitle { font-size: clamp(1rem, 2.4vh, 1.6rem); color: #555; }
-  li { font-size: clamp(0.82rem, 1.7vh, 1.2rem); color: #333; line-height: 1.35; }
-  code { font-family: 'Consolas', monospace; font-size: clamp(0.78rem, 1.5vh, 1.1rem); background: #f0f0f0; padding: 1px 4px; border-radius: 2px; }
+  h1 { font-size: clamp(2rem, 2.7vw, 3.5rem); font-weight: 700; color: #1a3a5c; }
+  h2 { font-size: clamp(1.4rem, 1.77vw, 2.25rem); font-weight: 700; color: #1a3a5c; }
+  h3 { font-size: clamp(1.1rem, 1.2vw, 1.5rem); font-weight: 600; color: #1a3a5c; }
+  p { font-size: clamp(0.9rem, 0.99vw, 1.25rem); color: #333; line-height: 1.5; }
+  .subtitle { font-size: clamp(1rem, 1.3vw, 1.6rem); color: #555; }
+  li { font-size: 1.125rem; color: #333; line-height: 1.5; max-width: 8em; }
+  code { font-family: 'Consolas', monospace; font-size: 0.95rem; background: #f0f0f0; padding: 1px 4px; border-radius: 2px; }
 
-  table { width: 100%; border-collapse: collapse; font-size: clamp(0.75rem, 1.5vh, 1.1rem); }
-  th { background: #1a3a5c; color: #fff; padding: 0.6vh 0.8vw; text-align: left; font-weight: 600; font-size: clamp(0.7rem, 1.4vh, 1rem); }
-  td { padding: 0.5vh 0.8vw; border-bottom: 1px solid #ddd; color: #222; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #1a3a5c; color: #fff; padding: 8px 16px; text-align: left; font-weight: 600; font-size: 1.125rem; }
+  td { padding: 8px 16px; border-bottom: 1px solid #ddd; color: #222; font-size: 1rem; }
   tr:nth-child(even) td { background: #f8f9fa; }
 
   ul { margin: 0 0 0 1.2em; }
-  li { margin-bottom: 0.15em; }
+  li { margin-bottom: 0.2em; }
 
   .highlight {
     background: #eef4fa; border-left: 4px solid #1a3a5c;
-    padding: clamp(6px, 1.2vh, 18px) clamp(10px, 1.5vw, 24px);
-    font-size: clamp(0.78rem, 1.5vh, 1.15rem);
+    padding: 20px; font-size: clamp(0.9rem, 0.99vw, 1.25rem);
   }
   .highlight strong { color: #1a3a5c; }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(8px, 1.5vw, 24px); }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(8px, 1.2vw, 20px); }
-  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(6px, 1vw, 16px); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 
   .box {
     background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 5px;
-    padding: clamp(10px, 1.5vh, 22px);
+    padding: 20px;
   }
-  .box p { font-size: clamp(0.78rem, 1.5vh, 1.15rem); margin-bottom: 0.2em; }
-  .box h3 { margin-bottom: 0.15em; }
-  .num { font-size: clamp(1.2rem, 3vh, 2.2rem); font-weight: 700; color: #1a3a5c; }
-  .label { font-size: clamp(0.65rem, 1.3vh, 1rem); color: #666; }
+  .box p { font-size: clamp(0.9rem, 0.99vw, 1.25rem); margin-bottom: 0.3em; }
+  .box h3 { margin-bottom: 0.3em; }
+
+  .num { font-size: clamp(1.8rem, 2.5vw, 3rem); font-weight: 700; color: #1a3a5c; }
+  .label { font-size: 1rem; color: #666; }
 
   .tag {
-    display: inline-block; padding: 0.2vh 0.5vw; margin: 1px;
-    font-size: clamp(0.55rem, 1.2vh, 0.9rem);
+    display: inline-block; padding: 3px 10px; margin: 2px;
+    font-size: 0.9rem;
     background: #e8eef5; color: #1a3a5c; border-radius: 3px;
   }
 
@@ -97,14 +95,54 @@
     border: 1px solid #ccc; font-size: clamp(0.45rem, 0.8vh, 0.7rem); color: #888;
   }
 
-  .flow { display: flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: wrap; margin: 0.3em 0; }
-  .flow-step { background: #e8eef5; border: 1px solid #c0d0e0; border-radius: 4px; padding: 0.3vh 0.8vw; font-size: clamp(0.7rem, 1.3vh, 1rem); color: #1a3a5c; }
-  .flow-arrow { font-size: clamp(0.7rem, 1.3vh, 1rem); color: #999; }
+  .flow { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+  .flow-step { background: #e8eef5; border: 1px solid #c0d0e0; border-radius: 4px; padding: 6px 14px; font-size: 1rem; color: #1a3a5c; white-space: nowrap; }
+  .flow-arrow { font-size: 1rem; color: #999; }
+
+  .pipeline-v { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .pipeline-step { background: #e8eef5; border: 1px solid #c0d0e0; border-radius: 4px; padding: 6px 16px; font-size: 1rem; color: #1a3a5c; text-align: center; min-width: 140px; }
+  .pipeline-step.sm { padding: 4px 12px; font-size: 0.85rem; }
+  .pipeline-arrow { font-size: 0.8rem; color: #999; line-height: 1; padding: 2px 0; }
+
+  .bar-chart { display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { min-width: 80px; font-size: 1rem; color: #333; text-align: right; }
+  .bar-track { flex: 1; height: 20px; background: #eee; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-fill.temp { background: #e74c3c; width: 13.7%; }
+  .bar-fill.rain { background: #3498db; width: 1%; min-width: 4px; }
+  .bar-fill.wind { background: #95a5a6; width: 0.5%; min-width: 4px; }
+  .bar-value { min-width: 40px; font-size: 1rem; font-weight: 700; color: #1a3a5c; text-align: right; }
+
+  .stat-cards { display: grid; gap: 24px; }
+  .stat-card { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 5px; text-align: center; padding: 20px; }
+  .stat-card .num { font-size: clamp(1.8rem, 2.5vw, 3rem); font-weight: 700; color: #1a3a5c; }
+  .stat-card .label { font-size: 1rem; color: #666; }
+
+  .pipeline-h { display: flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: wrap; }
+  .pipeline-h .step { background: #e8eef5; border: 1px solid #c0d0e0; border-radius: 4px; padding: 6px 12px; font-size: 0.95rem; color: #1a3a5c; white-space: nowrap; }
+  .pipeline-h .arrow { font-size: 0.9rem; color: #999; }
+
+  .filetree { font-family: 'Consolas', 'Courier New', monospace; font-size: 0.95rem; line-height: 1.8; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 5px; padding: 20px; white-space: pre; }
+  .filetree .folder { color: #1a3a5c; font-weight: 600; }
+  .filetree .file { color: #333; }
+  .filetree .comment { color: #888; }
+
+  .split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  .reason-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .reason-card { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 5px; padding: 14px; }
+  .reason-card .action { font-weight: 600; color: #1a3a5c; font-size: 0.95rem; }
+  .reason-card .why { color: #555; font-size: 0.85rem; margin-top: 2px; }
 
   @media (max-width: 768px) {
-    .slide-body { padding: 2vh 2vw; }
-    .slide-header { padding: 1vh 2vw; }
+    .slide-body { padding: 20px; }
+    .slide-header { padding: 0 4vw; }
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .stat-cards { grid-template-columns: 1fr; }
+    .split-layout { grid-template-columns: 1fr; }
+    .reason-grid { grid-template-columns: 1fr; }
+    .pipeline-step { min-width: auto; }
     .nav-hint { display: none; }
   }
 </style>
@@ -119,359 +157,445 @@
     <div class="slide-body-inner">
       <h1>Predicting ICE Train Delays</h1>
       <p class="subtitle">Using Operational and Weather Data</p>
-      <p style="margin: 0.4em 0;">
+      <p>
         <span class="tag">Classification</span>
         <span class="tag">Regression</span>
         <span class="tag">Deutsche Bahn</span>
         <span class="tag">Open-Meteo</span>
       </p>
-      <p style="color: #888; margin-top: 1.2em; font-size: clamp(0.75rem, 1.5vh, 1.1rem);">July 2024 &bull; 95 Stations &bull; 146K Stops &bull; Capstone Project</p>
+      <p style="color:#888;">July 2024 &bull; 95 Stations &bull; 146K Stops &bull; Capstone Project</p>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 2: PROBLEM + RESEARCH QUESTIONS -->
+<!-- SLIDE 2: WHY SHOULD ANYONE CARE? -->
+<div class="slide center">
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <h2>Why Should Anyone Care?</h2>
+      <p style="font-size:clamp(1rem, 1.3vw, 1.6rem);">Germany &bull; Millions of passengers &bull; Every day</p>
+      <p style="font-size:1.5rem; color:#ccc;">&darr;</p>
+      <p style="font-size:clamp(1rem, 1.3vw, 1.6rem);">Delays disrupt schedules, connections, and plans</p>
+      <p style="font-size:1.5rem; color:#ccc;">&darr;</p>
+      <p style="font-size:clamp(1rem, 1.3vw, 1.6rem);">Customer dissatisfaction &bull; Missed connections</p>
+      <p style="font-size:1.5rem; color:#ccc;">&darr;</p>
+      <div class="highlight" style="font-size:clamp(1rem, 1.2vw, 1.5rem);">
+        <strong>Can ML predict delays before they happen?</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: WHAT ARE WE PREDICTING? -->
 <div class="slide">
   <div class="slide-header">
-    <span class="title">Problem Definition</span>
-    <span class="num">2 / 11</span>
+    <span class="title">What Are We Predicting?</span>
+    <span class="num">3 / 12</span>
   </div>
   <div class="slide-body">
     <div class="slide-body-inner">
-      <p style="font-weight:600; font-size:clamp(0.9rem, 1.8vh, 1.3rem);">Deutsche Bahn delays affect passenger experience, train scheduling, and operational decisions.</p>
+      <div class="flow">
+        <span class="flow-step">Passenger</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-step">Train Operator</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-step">Delay Prediction</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-step">Early Decision</span>
+      </div>
       <div class="grid-2">
-        <div class="box">
+        <div class="box" style="text-align:center;">
           <h3>Classification</h3>
-          <p style="font-weight:600;">Will an ICE stop have a significant delay (&ge; 6 min)?</p>
-          <p><code>is_delayed = 1 if delay &ge; 6 min</code></p>
+          <p style="font-weight:600;">Will delay &ge; 6 min?</p>
           <p style="color:#666;">&rarr; Early warning system</p>
         </div>
-        <div class="box">
+        <div class="box" style="text-align:center;">
           <h3>Regression</h3>
           <p style="font-weight:600;">How many minutes late?</p>
-          <p><code>delay_in_min = actual - planned</code></p>
-          <p style="color:#666;">&rarr; Estimate delay severity</p>
-        </div>
-      </div>
-      <div class="grid-2" style="margin-top:0;">
-        <div class="highlight" style="margin:0;">
-          <strong>RQ1</strong> &mdash; Can ICE delays be predicted using operational information?<br>
-          <strong>RQ2</strong> &mdash; Does adding weather data improve prediction?<br>
-          <strong>RQ3</strong> &mdash; Which weather conditions influence delays?
-        </div>
-        <div class="highlight" style="margin:0;">
-          <strong>H1</strong> &mdash; Precipitation increases delay probability<br>
-          <strong>H2</strong> &mdash; Operational features are stronger predictors than weather alone
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 3: DATA SOURCES -->
-<div class="slide">
-  <div class="slide-header">
-    <span class="title">Data Sources</span>
-    <span class="num">3 / 11</span>
-  </div>
-  <div class="slide-body">
-    <div class="slide-body-inner">
-      <div class="grid-2">
-        <div class="box">
-          <h3>Deutsche Bahn Operational Data</h3>
-          <p><span class="tag">Hugging Face</span><span class="tag">CC BY 4.0</span></p>
-          <p>Full dataset: 54.8 GB across many months. We use <strong>July 2024</strong> as a focused subset.</p>
-          <table>
-            <tr><td>Train type</td><td><strong>ICE</strong> (filtered from all types)</td></tr>
-            <tr><td>Stops</td><td><strong>158K</strong> ICE stops extracted</td></tr>
-            <tr><td>Stations</td><td><strong>95</strong></td></tr>
-            <tr><td>Trains</td><td><strong>812</strong> unique ICE trains</td></tr>
-          </table>
-        </div>
-        <div class="box">
-          <h3>One Row = One Stop</h3>
-          <p>Each row records one ICE train stopping at one station at a planned departure time.</p>
-          <div style="background:#eef4fa; border-radius:4px; padding:0.6vh 1vw; font-family:monospace; font-size:clamp(0.7rem, 1.3vh, 1rem); margin-top:4px;">
-            ICE 597<br>
-            Berlin Hbf<br>
-            Planned: 2024-07-15 14:30<br>
-            Delay: 8 minutes
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 4: WEATHER INTEGRATION -->
-<div class="slide">
-  <div class="slide-header">
-    <span class="title">Weather Data Integration</span>
-    <span class="num">4 / 11</span>
-  </div>
-  <div class="slide-body">
-    <div class="slide-body-inner">
-      <div class="grid-2">
-        <div class="box">
-          <h3>Open-Meteo Historical Weather</h3>
-          <p><span class="tag">Free API</span><span class="tag">Hourly</span></p>
-          <p>Variables: temperature, precipitation, wind speed, cloud cover, humidity, pressure.</p>
-          <p style="margin-top:4px;"><strong>Challenge:</strong> DB data has station IDs but no coordinates.</p>
-        </div>
-        <div class="box">
-          <h3>Geocoding Pipeline</h3>
-          <div class="flow">
-            <span class="flow-step">EVA ID</span>
-            <span class="flow-arrow">&rarr;</span>
-            <span class="flow-step">Nominatim</span>
-            <span class="flow-arrow">&rarr;</span>
-            <span class="flow-step">Lat/Lon</span>
-            <span class="flow-arrow">&rarr;</span>
-            <span class="flow-step">Open-Meteo</span>
-            <span class="flow-arrow">&rarr;</span>
-            <span class="flow-step">Weather</span>
-          </div>
+          <p style="color:#666;">&rarr; Severity estimation</p>
         </div>
       </div>
       <div class="highlight">
-        <strong>Merge:</strong> LEFT JOIN on <code>station + planned departure hour</code>. Planned time used &mdash; actual departure time would leak the target. <strong>90.35%</strong> merge success (132,268 of 146,389 rows matched weather).
+        <strong>RQ:</strong> Can operational data predict delays? &bull; Does weather improve predictions? &bull; Which conditions matter?
       </div>
-      <table>
-        <tr><th>Step</th><th>Result</th></tr>
-        <tr><td>ICE stops before merge</td><td>146,389</td></tr>
-        <tr><td>Weather-matched</td><td>132,268 (90.35%)</td></tr>
-        <tr><td>Without departure time</td><td>14,121 (flagged, not dropped)</td></tr>
-      </table>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 5: EDA - DELAY DISTRIBUTION -->
+<!-- SLIDE 4: WHAT DATA DID WE USE? -->
 <div class="slide">
   <div class="slide-header">
-    <span class="title">Exploratory Analysis — Delays</span>
-    <span class="num">5 / 11</span>
+    <span class="title">What Data Did We Use?</span>
+    <span class="num">4 / 12</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="grid-2">
+        <div class="box">
+          <h3>Data Pipeline</h3>
+          <div class="pipeline-v">
+            <span class="pipeline-step">DB Dataset<br><span style="font-size:0.8rem; color:#666;">54.8 GB</span></span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step">Filter ICE</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step">158K Stops</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step">Cleaning</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step">146K Stops</span>
+          </div>
+        </div>
+        <div class="box" style="display:flex; flex-direction:column; justify-content:center;">
+          <h3>Dataset Summary</h3>
+          <div class="stat-cards" style="grid-template-columns:1fr; gap:16px;">
+            <div class="stat-card" style="padding:14px;">
+              <div class="num">146K</div>
+              <div class="label">ICE Stops</div>
+            </div>
+            <div class="stat-card" style="padding:14px;">
+              <div class="num">95</div>
+              <div class="label">Stations</div>
+            </div>
+            <div class="stat-card" style="padding:14px;">
+              <div class="num">812</div>
+              <div class="label">Trains</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: HOW DID WE COMBINE WEATHER? -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">How Did We Combine Weather?</span>
+    <span class="num">5 / 12</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="grid-2">
+        <div class="box">
+          <h3>Weather Integration Pipeline</h3>
+          <div class="pipeline-v">
+            <span class="pipeline-step">EVA Station ID</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step">Geocoding</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step">Coordinates<br><span style="font-size:0.8rem; color:#666;">Latitude / Longitude</span></span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step">Open-Meteo</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step">Hourly Weather</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step">LEFT JOIN<br><span style="font-size:0.8rem; color:#666;">Station + planned hour</span></span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step">Merged Dataset</span>
+          </div>
+        </div>
+        <div class="box" style="display:flex; flex-direction:column; justify-content:center;">
+          <h3>Merge Result</h3>
+          <div class="stat-card" style="margin-bottom:12px;">
+            <div class="num">90.3%</div>
+            <div class="label">Merge Success Rate</div>
+          </div>
+          <p style="color:#555; font-size:0.9rem;">132,268 of 146,389 rows matched</p>
+          <p style="color:#555; font-size:0.9rem;">14,121 flagged as missing</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: HOW ARE DELAYS DISTRIBUTED? -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">How Are Delays Distributed?</span>
+    <span class="num">6 / 12</span>
   </div>
   <div class="slide-body">
     <div class="slide-body-inner">
       <div class="grid-2">
         <div class="box">
           <h3>Class Balance</h3>
-          <div style="display:flex; height:clamp(22px, 4vh, 40px); border-radius:3px; overflow:hidden; margin:0.3em 0;">
-            <div style="flex:57.68; background:#4CAF50; display:flex; align-items:center; justify-content:center; font-size:clamp(0.55rem, 1.2vh, 0.85rem); font-weight:600; color:#fff;">57.7% On time</div>
-            <div style="flex:42.32; background:#f44336; display:flex; align-items:center; justify-content:center; font-size:clamp(0.55rem, 1.2vh, 0.85rem); font-weight:600; color:#fff;">42.3% Delayed</div>
+          <div style="display:flex; height:clamp(26px, 4vh, 40px); border-radius:3px; overflow:hidden; margin:12px 0;">
+            <div style="flex:57.68; background:#4CAF50; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:600; color:#fff;">57.7% On time</div>
+            <div style="flex:42.32; background:#f44336; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:600; color:#fff;">42.3% Delayed</div>
           </div>
-          <p>Imbalance ratio: <strong>1.36:1</strong>. This is manageable but accuracy alone is misleading (always "on-time" = 57.7%).</p>
+          <p>Imbalance ratio 1.36:1 — manageable</p>
         </div>
         <div class="box">
-          <h3>Delay Severity</h3>
-          <table>
-            <tr><td>Mean delay</td><td><strong>10.57 min</strong></td></tr>
-            <tr><td>Median</td><td><strong>4 min</strong></td></tr>
-            <tr><td>Maximum</td><td><strong>298 min</strong></td></tr>
-            <tr><td>95th percentile</td><td>44.6 min</td></tr>
-          </table>
-          <p>Distribution is right-skewed &mdash; most delays are moderate but severe delays exist.</p>
+          <h3>Severity Metrics</h3>
+          <div class="stat-cards" style="grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="stat-card" style="padding:14px;">
+              <div class="num">42.3%</div>
+              <div class="label">Delayed</div>
+            </div>
+            <div class="stat-card" style="padding:14px;">
+              <div class="num">57.7%</div>
+              <div class="label">On Time</div>
+            </div>
+            <div class="stat-card" style="padding:14px;">
+              <div class="num">10.57</div>
+              <div class="label">Mean (min)</div>
+            </div>
+            <div class="stat-card" style="padding:14px;">
+              <div class="num">298</div>
+              <div class="label">Max (min)</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 6: EDA - WEATHER -->
+<!-- SLIDE 7: DOES WEATHER AFFECT DELAYS? -->
 <div class="slide">
   <div class="slide-header">
-    <span class="title">Exploratory Analysis — Weather</span>
-    <span class="num">6 / 11</span>
+    <span class="title">Does Weather Affect Delays?</span>
+    <span class="num">7 / 12</span>
   </div>
   <div class="slide-body">
     <div class="slide-body-inner">
       <div class="grid-2">
         <div class="box">
-          <h3>Correlation with Delay</h3>
-          <table>
-            <tr><th>Feature</th><th>Correlation (r)</th></tr>
-            <tr><td>Temperature</td><td>0.137</td></tr>
-            <tr><td>Precipitation</td><td>&lt; 0.01</td></tr>
-            <tr><td>Wind gusts</td><td>&lt; 0.01</td></tr>
-          </table>
-          <p>Linear correlation is very weak across all weather variables.</p>
+          <h3>Pearson Correlation</h3>
+          <div class="bar-chart">
+            <div class="bar-row">
+              <span class="bar-label">Temperature</span>
+              <div class="bar-track"><div class="bar-fill temp"></div></div>
+              <span class="bar-value">0.137</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Rain</span>
+              <div class="bar-track"><div class="bar-fill rain"></div></div>
+              <span class="bar-value">0.01</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Wind</span>
+              <div class="bar-track"><div class="bar-fill wind"></div></div>
+              <span class="bar-value">0.00</span>
+            </div>
+          </div>
+          <p style="margin-top:8px;">Linear correlation is very weak.</p>
         </div>
         <div class="box">
           <h3>Non-linear Effect</h3>
-          <p>Delay rate by precipitation:</p>
-          <table>
-            <tr><th>Condition</th><th>Delay rate</th></tr>
-            <tr><td>Dry (0 mm)</td><td>41.6%</td></tr>
-            <tr><td>Rain (&gt; 0 mm)</td><td>~44.5%</td></tr>
-          </table>
-          <p>Weather effect exists but is <strong>non-linear</strong>. This is why tree-based models (Random Forest, XGBoost) are likely better candidates than linear models.</p>
-        </div>
-      </div>
-      <div class="highlight">
-        <strong>H1 supported:</strong> Precipitation increases delay probability (41.6% &rarr; ~44.5%). Linear models would miss this step-function pattern.
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 7: DATA CLEANING -->
-<div class="slide">
-  <div class="slide-header">
-    <span class="title">Data Cleaning</span>
-    <span class="num">7 / 11</span>
-  </div>
-  <div class="slide-body">
-    <div class="slide-body-inner">
-      <p>Raw ICE data: <strong>158K rows</strong> &rarr; <strong>146K clean rows</strong></p>
-      <table>
-        <tr><th>Issue</th><th>Action</th><th>Rows affected</th><th>Rationale</th></tr>
-        <tr><td>Cancelled trains</td><td>Removed</td><td>11,497</td><td>No delay value to predict</td></tr>
-        <tr><td>Timestamp timezone</td><td>Converted to Europe/Berlin</td><td>All 158K</td><td>Original timestamps were naive</td></tr>
-        <tr><td>Null station names</td><td>Filled from mapping</td><td>&lt; 1K</td><td>Station is a key feature</td></tr>
-        <tr><td>Missing weather</td><td>Kept as nulls</td><td>14,121</td><td>Dropping would hide data issues</td></tr>
-        <tr><td>Target leakage</td><td>Excluded columns</td><td>&mdash;</td><td>Actual arrival/departure times encode the delay</td></tr>
-        <tr><td>Redundant columns</td><td>Dropped</td><td>&mdash;</td><td><code>rain</code> (r=1.0 with precip), <code>snowfall</code> (zero variance)</td></tr>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 8: BASELINE & EVALUATION -->
-<div class="slide">
-  <div class="slide-header">
-    <span class="title">Baseline &amp; Evaluation Plan</span>
-    <span class="num">8 / 11</span>
-  </div>
-  <div class="slide-body">
-    <div class="slide-body-inner">
-      <div class="grid-2">
-        <div class="box">
-          <h3>Baseline Model</h3>
-          <div style="background:#eef4fa; padding:clamp(4px, 0.8vh, 12px); border-radius:3px; margin:4px 0;">
-            <p style="margin:0;"><strong>Majority Class Predictor</strong> &mdash; Always predict "On Time"</p>
-            <p style="margin:0; font-weight:600;">Expected accuracy: ~57.7%</p>
+          <div class="stat-cards" style="grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="stat-card" style="padding:14px;">
+              <div class="num">41.6%</div>
+              <div class="label">Dry (0 mm)</div>
+            </div>
+            <div class="stat-card" style="padding:14px;">
+              <div class="num">~44.5%</div>
+              <div class="label">Rain (&gt; 0 mm)</div>
+            </div>
           </div>
-          <p>This is not useful operationally &mdash; it never catches a delay. Every real model must beat this.</p>
-        </div>
-        <div class="box">
-          <h3>Classification Metrics</h3>
-          <p><strong>Primary: F1 Score</strong></p>
-          <p>Why? Classes are imbalanced (57.7% vs 42.3%). Accuracy is misleading. F1 balances precision and recall.</p>
-          <p><strong>Also: ROC-AUC</strong> for ranking prediction quality.</p>
-        </div>
-      </div>
-      <div class="grid-2">
-        <div class="box">
-          <h3>Regression Metrics</h3>
-          <p><strong>MAE</strong> &mdash; Average error in minutes, directly interpretable for passengers.</p>
-          <p><strong>RMSE</strong> &mdash; Penalizes large delay mistakes. A model with MAE 8 min but RMSE 25 min is unreliable on severe delays.</p>
-        </div>
-        <div class="box">
-          <h3>Evaluation Protocol</h3>
-          <p><strong>Time-based split:</strong> Chronological, no random shuffle &mdash; prevents temporal leakage.</p>
-          <p><strong>Ablation study:</strong> Same algorithm with vs without weather features &rarr; directly answers RQ2.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 9: NEXT STEPS -->
-<div class="slide">
-  <div class="slide-header">
-    <span class="title">Next Steps — ML Pipeline</span>
-    <span class="num">9 / 11</span>
-  </div>
-  <div class="slide-body">
-    <div class="slide-body-inner">
-      <div class="grid-2">
-        <div class="box">
-          <h3>Feature Engineering (Notebook 06)</h3>
-          <p><strong>Operational:</strong> train type, station, hour, day of week, route info</p>
-          <p><strong>Weather:</strong> temperature, precipitation, wind</p>
-        </div>
-        <div class="box">
-          <h3>Models (Notebooks 07-08)</h3>
-          <p><strong>Baseline:</strong> Logistic Regression, Linear Regression</p>
-          <p><strong>Advanced:</strong> Random Forest, XGBoost</p>
-        </div>
-      </div>
-      <div class="highlight">
-        <strong>Research Experiment:</strong> Model A (operational only) vs Model B (operational + weather). This comparison answers RQ2 &mdash; does weather improve prediction?
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 10: CODE REVIEW -->
-<div class="slide">
-  <div class="slide-header">
-    <span class="title">Code Structure &amp; Quality</span>
-    <span class="num">10 / 11</span>
-  </div>
-  <div class="slide-body">
-    <div class="slide-body-inner">
-      <div class="grid-2">
-        <div class="box">
-          <h3>Pipeline Design</h3>
-          <div class="flow" style="justify-content:flex-start;">
-            <span class="flow-step">Acquire</span>
-            <span class="flow-arrow">&darr;</span>
-            <span class="flow-step">Clean</span>
-            <span class="flow-arrow">&darr;</span>
-            <span class="flow-step">Integrate</span>
-            <span class="flow-arrow">&darr;</span>
-            <span class="flow-step">Analyze</span>
-            <span class="flow-arrow">&darr;</span>
-            <span class="flow-step">Model</span>
+          <div class="highlight" style="margin-top:12px; padding:14px;">
+            Weather shows weak linear but noticeable nonlinear effects.
           </div>
-          <p>Each notebook has one responsibility. Outputs Parquet files for the next step. No hardcoded paths.</p>
-        </div>
-        <div class="box">
-          <h3>Challenges Solved</h3>
-          <table>
-            <tr><th>Challenge</th><th>Solution</th></tr>
-            <tr><td>54 GB dataset</td><td>Parquet + chunked reading</td></tr>
-            <tr><td>Missing coordinates</td><td>Nominatim geocoding</td></tr>
-            <tr><td>Weather matching</td><td>Hour-level merge on planned time</td></tr>
-            <tr><td>Leakage risk</td><td>Planned timestamps only</td></tr>
-            <tr><td>Class imbalance</td><td>F1 / ROC-AUC evaluation</td></tr>
-          </table>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 11: KEY TAKEAWAYS -->
+<!-- SLIDE 8: HOW DID WE CLEAN THE DATA? -->
 <div class="slide">
   <div class="slide-header">
-    <span class="title">What We Achieved</span>
-    <span class="num">11 / 11</span>
+    <span class="title">How Did We Clean the Data?</span>
+    <span class="num">8 / 12</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="split-layout">
+        <div class="box">
+          <h3>Cleaning Pipeline</h3>
+          <div class="pipeline-v">
+            <span class="pipeline-step">Raw Data &mdash; 158K</span>
+            <span class="pipeline-arrow">&darr; Remove cancellations</span>
+            <span class="pipeline-step sm">&minus;11,497 rows</span>
+            <span class="pipeline-arrow">&darr; Timezone standardization</span>
+            <span class="pipeline-step sm">Europe/Berlin</span>
+            <span class="pipeline-arrow">&darr; Fill missing stations</span>
+            <span class="pipeline-step sm">&lt; 1K filled</span>
+            <span class="pipeline-arrow">&darr; Remove leakage features</span>
+            <span class="pipeline-step">Clean &mdash; 146K</span>
+          </div>
+        </div>
+        <div class="box" style="display:flex; flex-direction:column; justify-content:center;">
+          <h3>Why Each Step Matters</h3>
+          <div class="reason-grid">
+            <div class="reason-card">
+              <div class="action">Cancellations removed</div>
+              <div class="why">No target value to predict</div>
+            </div>
+            <div class="reason-card">
+              <div class="action">Timezone conversion</div>
+              <div class="why">Consistent timestamps</div>
+            </div>
+            <div class="reason-card">
+              <div class="action">Keep missing weather</div>
+              <div class="why">Avoid hiding data issues</div>
+            </div>
+            <div class="reason-card">
+              <div class="action">Leakage removed</div>
+              <div class="why">Prevent target leakage</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: WHAT IS OUR BASELINE? -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">What Is Our Baseline?</span>
+    <span class="num">9 / 12</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="flow" style="gap:8px;">
+        <span class="flow-step">Always predict On-Time</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-step">Accuracy = 57.7%</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-step" style="background:#1a3a5c; color:#fff;">Minimum benchmark</span>
+      </div>
+      <div class="grid-2">
+        <div class="box" style="text-align:center;">
+          <h3>Classification</h3>
+          <p><strong>Primary:</strong> F1 Score</p>
+          <p style="color:#555;">Balances precision &amp; recall</p>
+          <p><strong>Also:</strong> ROC-AUC</p>
+          <p style="color:#555;">Ranking quality</p>
+        </div>
+        <div class="box" style="text-align:center;">
+          <h3>Regression</h3>
+          <p><strong>MAE</strong></p>
+          <p style="color:#555;">Avg error in minutes</p>
+          <p><strong>RMSE</strong></p>
+          <p style="color:#555;">Penalizes large errors</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: WHAT'S NEXT? -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">What's Next?</span>
+    <span class="num">10 / 12</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="box" style="text-align:center;">
+        <h3>ML Pipeline</h3>
+        <div class="pipeline-h">
+          <span class="step">Feature Engineering</span>
+          <span class="arrow">&rarr;</span>
+          <span class="step">Baselines</span>
+          <span class="arrow">&rarr;</span>
+          <span class="step">Random Forest</span>
+          <span class="arrow">&rarr;</span>
+          <span class="step">XGBoost</span>
+          <span class="arrow">&rarr;</span>
+          <span class="step">Comparison</span>
+          <span class="arrow">&rarr;</span>
+          <span class="step">Final Pipeline</span>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="box" style="text-align:center;">
+          <h3>Model A</h3>
+          <p>Operational features only</p>
+        </div>
+        <div class="box" style="text-align:center;">
+          <h3>Model B</h3>
+          <p>Operational + weather</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: HOW IS THE CODE STRUCTURED? -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">How Is the Code Structured?</span>
+    <span class="num">11 / 12</span>
   </div>
   <div class="slide-body">
     <div class="slide-body-inner">
       <div class="grid-2">
         <div class="box">
-          <h3>Built</h3>
+          <h3>Notebooks</h3>
+          <div class="filetree">notebooks/<span class="comment">  &larr; Each has one task</span>
+  <span class="file">01_problem.ipynb</span>
+  <span class="file">02_acquisition.ipynb</span>
+  <span class="file">03_cleaning.ipynb</span>
+  <span class="file">04_merge.ipynb</span>
+  <span class="file">05_EDA.ipynb</span>
+  <span class="file">06_features.ipynb</span>
+  <span class="file">07_models.ipynb</span>
+  <span class="file">08_evaluation.ipynb</span></div>
+        </div>
+        <div class="box" style="display:flex; flex-direction:column; justify-content:center;">
+          <h3>Pipeline Flow</h3>
+          <div class="pipeline-v">
+            <span class="pipeline-step sm">Acquire</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step sm">Clean</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step sm">Merge</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step sm">EDA</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step sm">Train</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step sm">Evaluate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: WHAT DID WE ACHIEVE? -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="title">What Did We Achieve?</span>
+    <span class="num">12 / 12</span>
+  </div>
+  <div class="slide-body">
+    <div class="slide-body-inner">
+      <div class="grid-2">
+        <div class="box">
+          <h3>Achievements</h3>
           <ul>
-            <li>End-to-end ML pipeline from raw data to modeling</li>
-            <li>Integrated DB operational data with Open-Meteo weather</li>
-            <li>Cleaned and analyzed 146K ICE stops across 95 stations</li>
+            <li>End-to-end ML pipeline</li>
+            <li>Weather data integration</li>
+            <li>146K ICE stops analysed</li>
+            <li>Leakage-safe dataset</li>
           </ul>
         </div>
         <div class="box">
-          <h3>Discovered</h3>
-          <ul>
-            <li>42.3% of ICE stops are delayed (&ge; 6 min)</li>
-            <li>Weather has a weak but non-linear effect on delays</li>
-            <li>Precipitation increases delay rate by ~3 percentage points</li>
-          </ul>
+          <h3>Next Steps</h3>
+          <div class="pipeline-v">
+            <span class="pipeline-step sm">Feature Engineering</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step sm">Model Training</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step sm">Weather Comparison</span>
+            <span class="pipeline-arrow">&darr;</span>
+            <span class="pipeline-step sm">Final Evaluation</span>
+          </div>
         </div>
-      </div>
-      <div class="highlight">
-        <strong>Next goal:</strong> Build and compare ML models to predict ICE delays &mdash; with and without weather features.
       </div>
     </div>
   </div>
@@ -480,7 +604,7 @@
 </div>
 
 <div class="nav-hint">
-  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navigate &nbsp;&bull;&nbsp; <span id="slideIndicator">Slide 1 of 11</span>
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navigate &nbsp;&bull;&nbsp; <span id="slideIndicator">Slide 1 of 12</span>
 </div>
 
 <script>

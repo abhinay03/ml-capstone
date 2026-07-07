@@ -1,0 +1,119 @@
+{
+  "metadata": {
+    "notebook": "03_Data_Cleaning_and_Standardization",
+    "section": "Section 2",
+    "created_at_utc": "2026-07-05T13:30:57.981178+00:00",
+    "target_month": "2024-07",
+    "input_parquet": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\ice_standardized_2024-07.parquet",
+    "output_parquet": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\ice_cleaned_2024-07.parquet"
+  },
+  "rows": {
+    "input": 157886,
+    "output": 146389,
+    "removed": 11497,
+    "removal_pct": 7.28
+  },
+  "cleaning_log": [
+    {
+      "step": "filter_ICE_only",
+      "rows_before": 157886,
+      "rows_after": 157886,
+      "rows_removed": 0,
+      "detail": ""
+    },
+    {
+      "step": "exclude_canceled",
+      "rows_before": 157886,
+      "rows_after": 146389,
+      "rows_removed": 11497,
+      "detail": "11,497 canceled stops removed"
+    },
+    {
+      "step": "drop_duplicate_ids",
+      "rows_before": 146389,
+      "rows_after": 146389,
+      "rows_removed": 0,
+      "detail": "0 duplicate ids removed"
+    },
+    {
+      "step": "fill_station_name",
+      "nulls_before": 0,
+      "nulls_after": 0,
+      "detail": "Filled from xml_station_name where station_name was null"
+    },
+    {
+      "step": "line_number_nulls_kept",
+      "null_pct": 100.0,
+      "detail": "ICE rows often have null line_number — expected, rows kept"
+    }
+  ],
+  "mergeable": {
+    "mergeable_rows": 132268,
+    "non_mergeable_rows": 14121,
+    "non_mergeable_pct": 9.65,
+    "note": "Non-mergeable rows have no departure_planned_time — excluded from weather join in Notebook 04"
+  },
+  "line_number_null_pct": 100.0,
+  "delay_stats_cleaned": {
+    "mean": 10.92,
+    "median": 4.0,
+    "min": -46,
+    "max": 298,
+    "on_time_pct": 18.35,
+    "delayed_gte_6_pct": 43.38
+  },
+  "validations": {
+    "only_ICE": {
+      "pass": true,
+      "non_ICE_count": 0
+    },
+    "no_canceled": {
+      "pass": true,
+      "canceled_count": 0
+    },
+    "no_duplicate_ids": {
+      "pass": true,
+      "duplicate_count": 0
+    },
+    "station_name_nulls": {
+      "pass": true,
+      "null_count": 0
+    },
+    "timestamps_tz_aware": {
+      "pass": true,
+      "dtype": "datetime64[ns, Europe/Berlin]"
+    },
+    "merge_key_present": {
+      "pass": true
+    },
+    "row_count_reduced": {
+      "input_rows": 157886,
+      "output_rows": 146389,
+      "rows_removed": 11497,
+      "removal_pct": 7.28
+    }
+  },
+  "columns_in_output": [
+    "station_name",
+    "xml_station_name",
+    "eva",
+    "train_number",
+    "line_number",
+    "final_destination_station",
+    "delay_in_min",
+    "time",
+    "is_canceled",
+    "train_type",
+    "train_line_ride_id",
+    "train_line_station_num",
+    "arrival_planned_time",
+    "arrival_change_time",
+    "departure_planned_time",
+    "departure_change_time",
+    "id",
+    "departure_planned_hour",
+    "departure_planned_hour_naive",
+    "mergeable"
+  ],
+  "ready_for_notebook_04": true
+}

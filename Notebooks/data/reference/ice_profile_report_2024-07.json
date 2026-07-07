@@ -1,0 +1,243 @@
+{
+  "metadata": {
+    "notebook": "02_Data_Acquisition_and_Initial_Inspection",
+    "section": "Section 2",
+    "created_at_utc": "2026-07-05T12:39:37.841014+00:00",
+    "target_month": "2024-07",
+    "source_parquet": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\ice_raw_2024-07.parquet"
+  },
+  "dataset_shape": {
+    "rows": 157886,
+    "columns": 17
+  },
+  "column_profile": [
+    {
+      "column": "line_number",
+      "dtype": "object",
+      "null_count": 157886,
+      "null_pct": 100.0,
+      "n_unique": 0
+    },
+    {
+      "column": "departure_planned_time",
+      "dtype": "datetime64[ns]",
+      "null_count": 15452,
+      "null_pct": 9.79,
+      "n_unique": 37610
+    },
+    {
+      "column": "departure_change_time",
+      "dtype": "datetime64[ns]",
+      "null_count": 15441,
+      "null_pct": 9.78,
+      "n_unique": 38066
+    },
+    {
+      "column": "arrival_planned_time",
+      "dtype": "datetime64[ns]",
+      "null_count": 15310,
+      "null_pct": 9.7,
+      "n_unique": 37765
+    },
+    {
+      "column": "arrival_change_time",
+      "dtype": "datetime64[ns]",
+      "null_count": 15307,
+      "null_pct": 9.69,
+      "n_unique": 38099
+    },
+    {
+      "column": "station_name",
+      "dtype": "object",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 91
+    },
+    {
+      "column": "train_type",
+      "dtype": "object",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 1
+    },
+    {
+      "column": "train_line_station_num",
+      "dtype": "int32",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 38
+    },
+    {
+      "column": "train_line_ride_id",
+      "dtype": "object",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 1065
+    },
+    {
+      "column": "is_canceled",
+      "dtype": "bool",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 2
+    },
+    {
+      "column": "xml_station_name",
+      "dtype": "object",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 94
+    },
+    {
+      "column": "time",
+      "dtype": "datetime64[ns]",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 39062
+    },
+    {
+      "column": "delay_in_min",
+      "dtype": "int32",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 255
+    },
+    {
+      "column": "final_destination_station",
+      "dtype": "object",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 83
+    },
+    {
+      "column": "train_number",
+      "dtype": "object",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 812
+    },
+    {
+      "column": "eva",
+      "dtype": "object",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 95
+    },
+    {
+      "column": "id",
+      "dtype": "object",
+      "null_count": 0,
+      "null_pct": 0.0,
+      "n_unique": 157886
+    }
+  ],
+  "delay_distribution": {
+    "count": 157886,
+    "min": -46,
+    "max": 299,
+    "mean": 10.9,
+    "median": 4.0,
+    "std": 18.8,
+    "early_arrivals_lt_0": 4728,
+    "on_time_eq_0": 35024,
+    "late_gt_0": 118134,
+    "late_gte_6": 66132,
+    "late_gte_15": 36671
+  },
+  "top_delay_values": [
+    {
+      "delay_in_min": 0,
+      "count": 35024
+    },
+    {
+      "delay_in_min": 1,
+      "count": 17561
+    },
+    {
+      "delay_in_min": 2,
+      "count": 11870
+    },
+    {
+      "delay_in_min": 3,
+      "count": 9489
+    },
+    {
+      "delay_in_min": 4,
+      "count": 7183
+    },
+    {
+      "delay_in_min": 5,
+      "count": 5899
+    },
+    {
+      "delay_in_min": 6,
+      "count": 5004
+    },
+    {
+      "delay_in_min": 7,
+      "count": 4273
+    },
+    {
+      "delay_in_min": 8,
+      "count": 3794
+    },
+    {
+      "delay_in_min": 9,
+      "count": 3364
+    }
+  ],
+  "cancellation": {
+    "canceled_count": 11497,
+    "canceled_pct": 7.28
+  },
+  "station_summary": {
+    "unique_eva_stations": 95,
+    "unique_station_names": 91,
+    "top_5_stations_by_stops": {
+      "Berlin Hbf": 7198,
+      "Frankfurt(Main)Hbf": 6939,
+      "München Hbf": 6733,
+      "Hannover Hbf": 5519,
+      "Berlin-Spandau": 5162
+    }
+  },
+  "train_summary": {
+    "unique_train_numbers": 812,
+    "unique_rides": 1065,
+    "top_5_trains_by_stops": {
+      "699": 489,
+      "619": 461,
+      "100": 455,
+      "1218": 449,
+      "1211": 447
+    },
+    "line_number_null_pct": 100.0
+  },
+  "time_range": {
+    "time_min": "2024-07-01 00:01:00",
+    "time_max": "2024-07-31 23:59:00",
+    "departure_planned_min": "2024-07-01 00:00:00",
+    "departure_planned_max": "2024-07-31 23:53:00"
+  },
+  "quality_flags": [
+    {
+      "flag": "high_null_columns",
+      "columns": [
+        "line_number"
+      ],
+      "action": "Document in Notebook 03; do not drop without justification"
+    },
+    {
+      "flag": "canceled_stops_present",
+      "count": 11497,
+      "pct": 7.28,
+      "action": "Exclude is_canceled==True in Notebook 03 (per merge_strategy)"
+    },
+    {
+      "flag": "class_imbalance_expected",
+      "on_time_pct": 22.18,
+      "delayed_gte_6_pct": 41.89,
+      "action": "Use F1/ROC-AUC in modeling (defined in research_framework.json)"
+    }
+  ]
+}

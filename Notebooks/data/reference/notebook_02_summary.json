@@ -1,0 +1,121 @@
+{
+  "metadata": {
+    "notebook": "02_Data_Acquisition_and_Initial_Inspection",
+    "section": "Section 4 — Close-Out",
+    "created_at_utc": "2026-07-05T12:49:52.372413+00:00",
+    "target_month": "2024-07",
+    "status": "COMPLETE"
+  },
+  "ice_data": {
+    "rows": 157886,
+    "columns": 17,
+    "unique_eva_stations": 95,
+    "unique_train_numbers": 812,
+    "unique_rides": 1065,
+    "canceled_pct": 7.28,
+    "date_range": {
+      "time_min": "2024-07-01 00:01:00",
+      "time_max": "2024-07-31 23:59:00",
+      "departure_planned_min": "2024-07-01 00:00:00",
+      "departure_planned_max": "2024-07-31 23:53:00"
+    },
+    "delay_mean_min": 10.9,
+    "delayed_gte_6_pct": 41.89,
+    "source_month_scanned": 2007251,
+    "ice_pct_of_month": 7.87,
+    "parquet_file": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\ice_raw_2024-07.parquet"
+  },
+  "weather_data": {
+    "rows": 744,
+    "date_range": {
+      "min": "2024-07-01 00:00:00",
+      "max": "2024-07-31 23:00:00"
+    },
+    "demo_location": {
+      "url": "https://archive-api.open-meteo.com/v1/archive",
+      "latitude": 52.525,
+      "longitude": 13.369,
+      "start_date": "2024-07-01",
+      "end_date": "2024-07-31",
+      "timezone": "Europe/Berlin",
+      "hourly_variables": [
+        "temperature_2m",
+        "precipitation",
+        "rain",
+        "snowfall",
+        "windspeed_10m",
+        "windgusts_10m",
+        "weather_code",
+        "visibility"
+      ],
+      "note": "Demo location only — all eva stations geocoded in Notebook 04"
+    },
+    "temperature_mean_c": 20.37,
+    "precipitation_total_mm": 58.7,
+    "parquet_file": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\weather_sample_2024-07.parquet",
+    "note": "Demo Berlin location only — all 95 eva stations in Notebook 04"
+  },
+  "time_alignment": {
+    "railway_key": "departure_planned_hour (floored from departure_planned_time)",
+    "weather_key": "hourly.time",
+    "timezone": "Europe/Berlin",
+    "unique_railway_hours": 744,
+    "unique_weather_hours": 744,
+    "verified": true
+  },
+  "quality_flags": [
+    {
+      "flag": "high_null_columns",
+      "columns": [
+        "line_number"
+      ],
+      "action": "Document in Notebook 03; do not drop without justification"
+    },
+    {
+      "flag": "canceled_stops_present",
+      "count": 11497,
+      "pct": 7.28,
+      "action": "Exclude is_canceled==True in Notebook 03 (per merge_strategy)"
+    },
+    {
+      "flag": "class_imbalance_expected",
+      "on_time_pct": 22.18,
+      "delayed_gte_6_pct": 41.89,
+      "action": "Use F1/ROC-AUC in modeling (defined in research_framework.json)"
+    }
+  ],
+  "artifacts": {
+    "ice_raw_parquet": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\ice_raw_2024-07.parquet",
+      "size_mb": 5.24
+    },
+    "weather_sample_parquet": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\processed\\weather_sample_2024-07.parquet",
+      "size_mb": 0.02
+    },
+    "ice_load_report": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\ice_load_report_2024-07.json",
+      "size_mb": 0.0
+    },
+    "ice_profile_report": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\ice_profile_report_2024-07.json",
+      "size_mb": 0.01
+    },
+    "weather_inspection_report": {
+      "status": "OK",
+      "path": "c:\\Users\\Manikanta\\Desktop\\ML Project\\Notebooks\\data\\reference\\weather_inspection_report_2024-07.json",
+      "size_mb": 0.0
+    }
+  },
+  "ready_for_notebook_03": true,
+  "notebook_03_tasks": [
+    "Standardize all timestamps to Europe/Berlin 24h format",
+    "Exclude is_canceled == True rows",
+    "Handle null values in station_name and line_number",
+    "Save ice_cleaned_2024-07.parquet"
+  ]
+}
