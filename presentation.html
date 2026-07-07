@@ -1,479 +1,374 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ICE Train Delay Prediction — Mid Presentation</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0f172a; color: #e2e8f0; overflow: hidden; height: 100vh;
-    }
-    .slides-container {
-      display: flex; height: 100vh; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
-    }
-    .slide {
-      min-width: 100vw; height: 100vh; padding: 50px 80px;
-      display: flex; flex-direction: column; justify-content: center; position: relative; overflow-y: auto;
-    }
-    .slide-inner { max-width: 1100px; margin: 0 auto; width: 100%; position: relative; z-index: 1; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICE Train Delay Prediction - Mid Presentation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    background: #fff; color: #000;
+    overflow: hidden; height: 100vh;
+  }
+  .slides-container {
+    display: flex; height: 100vh; transition: transform 0.3s ease;
+  }
+  .slide {
+    min-width: 100vw; height: 100vh; padding: 50px 80px;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative;
+  }
+  .slide-inner { max-width: 1000px; margin: 0 auto; width: 100%; }
 
-    .slide::before {
-      content: ''; position: absolute; top: -50%; right: -20%;
-      width: 600px; height: 600px; border-radius: 50%;
-      background: radial-gradient(circle, #1e3a5f20 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .slide::after {
-      content: ''; position: absolute; bottom: -30%; left: -10%;
-      width: 400px; height: 400px; border-radius: 50%;
-      background: radial-gradient(circle, #2e1a5f15 0%, transparent 70%);
-      pointer-events: none;
-    }
+  h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #000; }
+  h2 { font-size: 1.8rem; font-weight: 600; color: #1a3a5c; margin-bottom: 1rem; border-bottom: 2px solid #1a3a5c; padding-bottom: 0.3rem; }
+  h3 { font-size: 1.1rem; font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+  p { font-size: 1rem; color: #222; margin-bottom: 0.5rem; line-height: 1.4; }
+  .subtitle { font-size: 1.2rem; color: #555; margin-bottom: 1.5rem; }
 
-    .slide-number {
-      position: absolute; bottom: 24px; right: 40px;
-      font-size: 0.8rem; color: #334155; font-variant-numeric: tabular-nums; z-index: 2;
-      background: #1e293b80; padding: 4px 12px; border-radius: 20px; backdrop-filter: blur(4px);
-    }
-    .nav-hint {
-      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
-      font-size: 0.75rem; color: #475569; display: flex; gap: 12px; align-items: center; z-index: 2;
-    }
-    .nav-hint kbd {
-      background: #1e293b; padding: 2px 8px; border-radius: 4px;
-      border: 1px solid #334155; font-size: 0.7rem; color: #475569;
-    }
+  table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.9rem; }
+  th { background: #1a3a5c; color: #fff; padding: 8px 12px; text-align: left; font-weight: 600; }
+  td { padding: 6px 12px; border-bottom: 1px solid #ccc; color: #000; }
+  tr:nth-child(even) td { background: #f5f5f5; }
 
-    .progress-bar {
-      position: fixed; top: 0; left: 0; height: 3px;
-      background: linear-gradient(90deg, #60a5fa, #a78bfa);
-      z-index: 100; transition: width 0.5s ease;
-    }
+  ul { margin: 0.3rem 0 0.3rem 1.2rem; }
+  li { font-size: 0.95rem; color: #222; margin-bottom: 0.15rem; line-height: 1.35; }
 
-    .anim { opacity: 0; transform: translateY(30px); transition: opacity 0.5s ease, transform 0.5s ease; }
-    .anim.active { opacity: 1; transform: translateY(0); }
-    .anim-delay-1 { transition-delay: 0.1s; }
-    .anim-delay-2 { transition-delay: 0.2s; }
-    .anim-delay-3 { transition-delay: 0.3s; }
-    .anim-delay-4 { transition-delay: 0.4s; }
-    .anim-delay-5 { transition-delay: 0.5s; }
-    .anim-delay-6 { transition-delay: 0.6s; }
-    .anim-delay-7 { transition-delay: 0.7s; }
-    .anim-scale { opacity: 0; transform: scale(0.85); transition: opacity 0.5s ease, transform 0.5s ease; }
-    .anim-scale.active { opacity: 1; transform: scale(1); }
-    .anim-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.5s ease, transform 0.5s ease; }
-    .anim-left.active { opacity: 1; transform: translateX(0); }
+  .highlight { background: #e8f0fe; border-left: 4px solid #1a3a5c; padding: 10px 14px; margin: 0.5rem 0; font-size: 0.9rem; }
 
-    h1 { font-size: 3.2rem; font-weight: 800; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; line-height: 1.2; }
-    h2 { font-size: 2rem; font-weight: 700; color: #60a5fa; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 12px; }
-    h2 .h2-icon { font-size: 1.6rem; -webkit-text-fill-color: initial; color: #60a5fa; }
-    h3 { font-size: 1.15rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem; }
-    p { font-size: 1rem; color: #cbd5e1; margin-bottom: 0.75rem; line-height: 1.6; }
-    .subtitle { font-size: 1.2rem; color: #94a3b8; margin-bottom: 1.5rem; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .box {
+    background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px; padding: 14px;
+  }
+  .box h3 { color: #1a3a5c; }
+  .box p { font-size: 0.9rem; color: #333; }
+  .num { font-size: 1.6rem; font-weight: 700; color: #1a3a5c; display: block; }
+  .label { font-size: 0.8rem; color: #666; display: block; }
 
-    .card {
-      background: #1e293b; border-radius: 12px; padding: 20px;
-      border: 1px solid #334155; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-    }
-    .card:hover { transform: translateY(-4px); border-color: #60a5fa60; box-shadow: 0 8px 24px #00000040; }
-    .card .num { font-size: 2.2rem; font-weight: 800; color: #60a5fa; display: block; line-height: 1.2; }
-    .card .label { font-size: 0.85rem; color: #94a3b8; display: block; margin-top: 2px; }
-    .card p { font-size: 0.9rem; margin-top: 0.4rem; color: #94a3b8; }
+  .tag {
+    display: inline-block; padding: 1px 6px; margin: 1px;
+    font-size: 0.7rem; background: #eee; color: #333; border: 1px solid #ccc; border-radius: 2px;
+  }
 
-    .badge {
-      display: inline-block; padding: 3px 10px; border-radius: 20px;
-      font-size: 0.75rem; font-weight: 600; margin-right: 4px;
-    }
-    .badge-blue { background: #1e3a5f; color: #60a5fa; }
-    .badge-purple { background: #2e1a5f; color: #a78bfa; }
-    .badge-green { background: #1a3f2e; color: #34d399; }
-    .badge-red { background: #3f1a1a; color: #f87171; }
-    .badge-yellow { background: #3f3a1a; color: #fbbf24; }
+  .center { text-align: center; align-items: center; }
+  .center .slide-inner { display: flex; flex-direction: column; align-items: center; }
 
-    .tag {
-      display: inline-block; padding: 2px 8px; border-radius: 4px;
-      font-size: 0.7rem; background: #1e293b; color: #64748b; border: 1px solid #334155; margin: 2px;
-    }
+  .slide-number {
+    position: absolute; bottom: 16px; right: 30px;
+    font-size: 0.75rem; color: #999;
+  }
 
-    table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.9rem; }
-    th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #1e293b; }
-    th { color: #60a5fa; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    td { color: #cbd5e1; }
+  .bar-chart { display: flex; gap: 6px; align-items: flex-end; height: 60px; margin: 0.5rem 0; }
+  .bar { flex: 1; min-height: 4px; position: relative; }
+  .bar-label { position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; color: #666; white-space: nowrap; }
+  .bar-val { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 0.65rem; color: #333; }
 
-    .highlight-box {
-      background: linear-gradient(135deg, #1e3a5f40, #2e1a5f40);
-      border-radius: 12px; padding: 20px; border: 1px solid #60a5fa30; margin: 0.75rem 0;
-    }
-    .highlight-box p { margin-bottom: 0; font-size: 0.95rem; }
+  .nav-hint {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    font-size: 0.7rem; color: #aaa;
+  }
+  .nav-hint kbd {
+    background: #f0f0f0; padding: 1px 6px; border-radius: 2px;
+    border: 1px solid #ccc; font-size: 0.65rem; color: #666;
+  }
 
-    ul { list-style: none; }
-    ul li { padding: 4px 0; padding-left: 18px; position: relative; color: #cbd5e1; font-size: 0.9rem; }
-    ul li::before { content: ""; position: absolute; left: 0; top: 11px; width: 6px; height: 6px; border-radius: 50%; background: #60a5fa; }
+  .corr-row { display: flex; align-items: center; gap: 8px; margin: 0.2rem 0; font-size: 0.8rem; }
+  .corr-bar { height: 10px; background: #1a3a5c; border-radius: 2px; }
 
-    .center { text-align: center; align-items: center; }
-    .center .slide-inner { display: flex; flex-direction: column; align-items: center; }
-
-    .icon-svg { width: 24px; height: 24px; flex-shrink: 0; }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-    .train-icon { animation: float 3s ease-in-out infinite; }
-
-    .bar-chart { display: flex; gap: 8px; align-items: flex-end; height: 80px; margin: 1rem 0; }
-    .bar { flex: 1; border-radius: 4px 4px 0 0; min-height: 4px; position: relative; transition: height 0.6s ease; }
-    .bar-label { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 0.65rem; color: #64748b; white-space: nowrap; }
-    .bar-val { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #94a3b8; }
-
-    .merge-flow { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 1rem 0; flex-wrap: wrap; }
-    .merge-node { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 12px 18px; text-align: center; min-width: 120px; }
-    .merge-node h4 { font-size: 0.8rem; color: #94a3b8; margin-bottom: 4px; }
-    .merge-node p { font-size: 0.75rem; color: #64748b; margin: 0; }
-
-    .corr-bar { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #60a5fa, #a78bfa); margin-top: 4px; }
-
-    .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 0.5rem; }
-    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #64748b; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-
-    .code-line {
-      font-family: 'Cascadia Code', 'Fira Code', monospace;
-      font-size: 0.75rem; color: #94a3b8;
-      background: #0f172a; padding: 2px 6px; border-radius: 4px;
-    }
-
-    .commit-card {
-      background: #0f172a; border-radius: 8px; padding: 12px; border: 1px solid #334155; font-family: monospace; font-size: 0.75rem; color: #94a3b8;
-    }
-
-    @media (max-width: 768px) {
-      .slide { padding: 30px 20px; }
-      .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
-      h1 { font-size: 2rem; }
-      h2 { font-size: 1.4rem; }
-    }
-  </style>
+  @media (max-width: 768px) {
+    .slide { padding: 30px 20px; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.3rem; }
+  }
+</style>
 </head>
 <body>
 
-<div class="progress-bar" id="progressBar"></div>
-
 <div class="slides-container" id="slidesContainer">
 
-<!-- ====== SLIDE 1: TITLE (15s) ====== -->
+<!-- SLIDE 1: TITLE -->
 <div class="slide center">
   <div class="slide-inner">
-    <svg class="train-icon anim anim-delay-1" width="80" height="80" viewBox="0 0 80 80" style="margin-bottom: 0.5rem;">
-      <rect x="10" y="25" width="60" height="30" rx="6" fill="none" stroke="#60a5fa" stroke-width="2.5"/>
-      <rect x="15" y="30" width="18" height="12" rx="2" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
-      <rect x="37" y="30" width="18" height="12" rx="2" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
-      <rect x="59" y="30" width="8" height="12" rx="2" fill="none" stroke="#34d399" stroke-width="1.5"/>
-      <circle cx="22" cy="62" r="6" fill="none" stroke="#f87171" stroke-width="2"/>
-      <circle cx="58" cy="62" r="6" fill="none" stroke="#f87171" stroke-width="2"/>
-    </svg>
-    <h1 class="anim anim-delay-2">ICE Train Delay Prediction</h1>
-    <p class="subtitle anim anim-delay-3">Using Railway Operational Data &amp; Historical Weather</p>
-    <div class="anim anim-delay-4" style="margin-top: 1rem;">
-      <span class="badge badge-blue">Classification</span>
-      <span class="badge badge-purple">Regression</span>
-      <span class="badge badge-green">Deutsche Bahn</span>
-      <span class="badge badge-red">Open-Meteo</span>
-      <span class="badge badge-yellow">Mid Presentation</span>
-    </div>
-    <p class="anim anim-delay-5" style="color: #475569; margin-top: 2rem;">July 2024 &bull; 95 Stations &bull; 146K Stops &bull; 32 Features</p>
+    <h1>ICE Train Delay Prediction</h1>
+    <p class="subtitle">Using Railway Operational Data &amp; Historical Weather</p>
+    <p style="margin-top: 0.5rem;">
+      <span class="tag">Classification</span>
+      <span class="tag">Regression</span>
+      <span class="tag">Deutsche Bahn</span>
+      <span class="tag">Open-Meteo</span>
+      <span class="tag">Capstone</span>
+    </p>
+    <p style="color: #888; margin-top: 1.5rem;">July 2024 &bull; 95 Stations &bull; 146K Stops &bull; 32 Features</p>
   </div>
   <span class="slide-number">1 / 9</span>
 </div>
 
-<!-- ====== SLIDE 2: PROBLEM (~1 min) ====== -->
+<!-- SLIDE 2: PROBLEM -->
 <div class="slide">
   <div class="slide-inner">
-    <h2 class="anim anim-left">1 &mdash; The Problem</h2>
-    <div class="grid-2" style="margin-top: 0.5rem;">
-      <div class="card anim anim-delay-1" style="border-top: 3px solid #60a5fa;">
+    <h2>1. The Problem</h2>
+    <div class="grid-2">
+      <div class="box">
         <h3>Classification</h3>
-        <div class="num" style="font-size:1.4rem; margin-top:8px;">Will this stop be delayed &ge; 6 min?</div>
-        <p>Binary: <span class="badge badge-green">on-time</span> or <span class="badge badge-red">delayed</span>. Threshold matches Deutsche Bahn's "significant delay" definition.</p>
-        <p style="font-size:0.8rem; color:#64748b;">Metric: F1 &amp; ROC-AUC (accuracy is misleading under imbalance)</p>
+        <p style="font-size:1.1rem; font-weight:600; margin-top:4px;">Will an ICE stop be delayed &ge; 6 minutes?</p>
+        <p>Binary output: on-time or delayed. The 6-minute threshold matches Deutsche Bahn's definition of a "significant delay."</p>
+        <p style="color:#666; font-size:0.85rem;">Primary metrics: F1, ROC-AUC &mdash; accuracy alone is misleading under class imbalance.</p>
       </div>
-      <div class="card anim anim-delay-2" style="border-top: 3px solid #a78bfa;">
+      <div class="box">
         <h3>Regression</h3>
-        <div class="num" style="font-size:1.4rem; margin-top:8px;">How many minutes late?</div>
-        <p>Continuous prediction from &minus;5 (early) up to 298 min. MAE is interpretable in minutes for passengers.</p>
-        <p style="font-size:0.8rem; color:#64748b;">Metric: MAE (interpretable) &amp; RMSE (penalizes severe delays)</p>
+        <p style="font-size:1.1rem; font-weight:600; margin-top:4px;">How many minutes late will it be?</p>
+        <p>Continuous prediction. Values range from -5 (early) to 298 minutes late. MAE is directly interpretable in minutes.</p>
+        <p style="color:#666; font-size:0.85rem;">Primary metrics: MAE (interpretable) and RMSE (penalizes severe delays).</p>
       </div>
     </div>
-    <div class="highlight-box anim anim-delay-3">
-      <p><strong>Why both?</strong> Operators need to know <em>whether</em> to trigger mitigations and <em>how much</em> to inform passengers. Three research questions: RQ1 &mdash; can operational features alone predict? RQ2 &mdash; does weather improve prediction? RQ3 &mdash; which weather variables matter most?</p>
+    <div class="highlight">
+      <strong>Why both?</strong> Operators need to know <em>whether</em> to trigger mitigations and <em>how much</em> delay to communicate. Three research questions guide the project: RQ1 &mdash; can operational features alone predict delays? RQ2 &mdash; does adding weather improve predictions? RQ3 &mdash; which weather variables matter most?
     </div>
   </div>
   <span class="slide-number">2 / 9</span>
 </div>
 
-<!-- ====== SLIDE 3: DATA (~1.5 min) ====== -->
+<!-- SLIDE 3: DATA -->
 <div class="slide">
   <div class="slide-inner">
-    <h2 class="anim anim-left">2 &mdash; The Data</h2>
-    <p class="anim anim-delay-1" style="color:#94a3b8; margin-bottom:0.5rem;"><strong>One row</strong> = one ICE train stop at one station on one planned schedule.</p>
-    <div class="grid-2" style="margin-top:0.25rem;">
-      <div class="card anim anim-delay-1">
-        <h3>Deutsche Bahn</h3>
-        <p><span class="tag">Hugging Face</span><span class="tag">54.8 GB</span><span class="tag">187M rows</span><span class="tag">CC BY 4.0</span></p>
-        <p>Monthly Parquet shards. July 2024: ~2M total rows &rarr; <strong>158K ICE rows</strong> (7.87% of all trains). 17 columns: timestamps, station IDs, delay, cancellations, route.</p>
+    <h2>2. The Data</h2>
+    <p style="margin-bottom:0.4rem;"><strong>One row = one ICE train stop at one station on one planned schedule.</strong></p>
+    <div class="grid-2">
+      <div class="box">
+        <h3>Deutsche Bahn (Hugging Face)</h3>
+        <p><span class="tag">54.8 GB</span><span class="tag">187M rows</span><span class="tag">CC BY 4.0</span></p>
+        <p>Monthly Parquet shards of all German train operations. July 2024 shard: ~2M total rows, filtered to <strong>158K ICE rows</strong> (7.87% of all trains). 17 columns: timestamps, station IDs, delay, cancellations, route info.</p>
       </div>
-      <div class="card anim anim-delay-2">
-        <h3>Open-Meteo Weather</h3>
-        <p><span class="tag">Archive API</span><span class="tag">Hourly</span><span class="tag">Free</span></p>
-        <p>8 hourly variables for <strong>95 stations</strong> &times; 744 hours = 70,680 weather rows. Temperature, precipitation, wind, visibility, weather code.</p>
+      <div class="box">
+        <h3>Open-Meteo Weather (Archive API)</h3>
+        <p><span class="tag">Hourly</span><span class="tag">Free</span><span class="tag">8 variables</span></p>
+        <p>95 stations &times; 744 hours = 70,680 weather rows. Variables: temperature, precipitation, rain, snowfall, windspeed, windgusts, weather code, visibility.</p>
       </div>
     </div>
-    <div class="grid-4 anim anim-delay-3" style="margin-top:0.5rem;">
-      <div class="card" style="padding:12px;"><span class="num" style="font-size:1.5rem;">146,389</span><span class="label">Cleaned rows</span></div>
-      <div class="card" style="padding:12px;"><span class="num" style="font-size:1.5rem;">95</span><span class="label">Stations</span></div>
-      <div class="card" style="padding:12px;"><span class="num" style="font-size:1.5rem;">812</span><span class="label">Unique trains</span></div>
-      <div class="card" style="padding:12px;"><span class="num" style="font-size:1.5rem;">32</span><span class="label">Features merged</span></div>
+    <div class="grid-4" style="margin-top:0.5rem;">
+      <div class="box" style="padding:10px; text-align:center;"><span class="num">146,389</span><span class="label">Cleaned rows</span></div>
+      <div class="box" style="padding:10px; text-align:center;"><span class="num">95</span><span class="label">Stations</span></div>
+      <div class="box" style="padding:10px; text-align:center;"><span class="num">812</span><span class="label">Unique trains</span></div>
+      <div class="box" style="padding:10px; text-align:center;"><span class="num">32</span><span class="label">Features (merged)</span></div>
     </div>
-    <div class="highlight-box anim anim-delay-4" style="margin-top:0.5rem;">
-      <p><strong>Join:</strong> Geocode EVA station IDs to lat/lon via Nominatim. LEFT JOIN on (station + departure_planned_hour). Planned hour avoids target leakage. 90.35% weather match rate.</p>
+    <div class="highlight">
+      <strong>Join strategy:</strong> Geocode EVA station IDs &rarr; lat/lon via Nominatim. LEFT JOIN on station + departure_planned_hour (hourly resolution). Planned time used to avoid target leakage. <strong>90.35%</strong> of railway rows matched to weather data.
     </div>
   </div>
   <span class="slide-number">3 / 9</span>
 </div>
 
-<!-- ====== SLIDE 4: CLEANING (~1 min) ====== -->
+<!-- SLIDE 4: CLEANING -->
 <div class="slide">
   <div class="slide-inner">
-    <h2 class="anim anim-left">3 &mdash; Cleaning</h2>
-    <p class="anim anim-delay-1" style="color:#94a3b8; margin-bottom:0.5rem;">Four categories of cleaning decisions:</p>
-    <div class="grid-2" style="margin-top:0.25rem;">
-      <div class="card anim anim-delay-1">
-        <div class="icon-wrap" style="display:flex; align-items:center; gap:6px;">
-          <span class="badge badge-red">DROP</span> <strong>Canceled stops</strong>
-        </div>
-        <p>11,497 rows (7.28%) removed. You cannot predict delay for trips that never ran.</p>
+    <h2>3. Data Cleaning</h2>
+    <p>Four categories of cleaning decisions:</p>
+    <div class="grid-2" style="margin-top:0.3rem;">
+      <div class="box">
+        <h3>Canceled stops</h3>
+        <p><strong>11,497 rows removed (7.28%).</strong> Cannot predict delay for trips that never ran. Removed before any analysis.</p>
       </div>
-      <div class="card anim anim-delay-2">
-        <div class="icon-wrap" style="display:flex; align-items:center; gap:6px;">
-          <span class="badge badge-yellow">FILL</span> <strong>Null station names</strong>
-        </div>
-        <p>Filled from <code class="code-line">xml_station_name</code>. Chosen over dropping because station identity is a key feature.</p>
+      <div class="box">
+        <h3>Null station names</h3>
+        <p>Filled from <code>xml_station_name</code> column. Station identity is important for modeling, so dropping would lose information.</p>
       </div>
-      <div class="card anim anim-delay-3">
-        <div class="icon-wrap" style="display:flex; align-items:center; gap:6px;">
-          <span class="badge badge-red">EXCLUDE</span> <strong>Target leakage</strong>
-        </div>
-        <p><code class="code-line">arrival_change_time</code> &amp; <code class="code-line">departure_change_time</code> encode the actual delay. Using them would leak the target.</p>
+      <div class="box">
+        <h3>Target leakage excluded</h3>
+        <p><code>arrival_change_time</code> and <code>departure_change_time</code> encode the actual delay. Including them would make the model trivially perfect but useless for real prediction.</p>
       </div>
-      <div class="card anim anim-delay-4">
-        <div class="icon-wrap" style="display:flex; align-items:center; gap:6px;">
-          <span class="badge badge-red">DROP</span> <strong>Redundant columns</strong>
-        </div>
-        <p><code class="code-line">rain</code> (r=1.0 with precipitation), <code class="code-line">snowfall</code> (zero variance in July).</p>
+      <div class="box">
+        <h3>Redundant columns dropped</h3>
+        <p><code>rain</code>: perfectly correlated with precipitation (r=1.0).<br><code>snowfall</code>: zero variance in July (all 0s). Both are dropped in feature engineering.</p>
       </div>
     </div>
-    <div class="highlight-box anim anim-delay-5" style="margin-top:0.5rem;">
-      <p><strong>Challenge:</strong> Timestamps were naive (no timezone). Standardized all 5 timestamp columns to <code class="code-line">Europe/Berlin</code>. 14,121 rows without <code class="code-line">departure_planned_time</code> flagged as non-mergeable.</p>
+    <div class="highlight">
+      <strong>Challenge:</strong> All 5 timestamp columns were naive (no timezone). Standardized to <code>Europe/Berlin</code> using <code>pandas.tz_localize</code>. 14,121 rows without departure_planned_time flagged as non-mergeable.
     </div>
   </div>
   <span class="slide-number">4 / 9</span>
 </div>
 
-<!-- ====== SLIDE 5: EDA (~1.5 min) ====== -->
+<!-- SLIDE 5: EDA -->
 <div class="slide">
   <div class="slide-inner">
-    <h2 class="anim anim-left">4 &mdash; Exploratory Data Analysis</h2>
-    <div class="grid-2" style="margin-top:0.25rem;">
-      <div class="card anim anim-delay-1">
+    <h2>4. Exploratory Data Analysis</h2>
+    <div class="grid-2">
+      <div class="box">
         <h3>Delay Distribution</h3>
-        <p>Right-skewed: median 4 min vs mean 10.57 min. 95th: 44.6 min. 99th: 84 min. Max: 298 min.</p>
-        <div class="bar-chart" style="height:60px;">
-          <div class="bar" style="height:100%; background:linear-gradient(#34d399,#1a3f2e);"><span class="bar-label">0-6m</span><span class="bar-val">57.7%</span></div>
-          <div class="bar" style="height:65%; background:linear-gradient(#60a5fa,#1e3a5f);"><span class="bar-label">6-30m</span><span class="bar-val">28.4%</span></div>
-          <div class="bar" style="height:35%; background:linear-gradient(#fbbf24,#3f3a1a);"><span class="bar-label">30-60m</span><span class="bar-val">9.1%</span></div>
-          <div class="bar" style="height:12%; background:linear-gradient(#f87171,#3f1a1a);"><span class="bar-label">&gt;60m</span><span class="bar-val">4.8%</span></div>
+        <p>Right-skewed. Median 4 min, mean 10.57 min. 95th percentile: 44.6 min. Max: 298 min.</p>
+        <div class="bar-chart">
+          <div class="bar" style="height:100%; background:#4CAF50;"><span class="bar-label">0-6 min</span><span class="bar-val">57.7%</span></div>
+          <div class="bar" style="height:60%; background:#2196F3;"><span class="bar-label">6-30 min</span><span class="bar-val">28.4%</span></div>
+          <div class="bar" style="height:30%; background:#FF9800;"><span class="bar-label">30-60 min</span><span class="bar-val">9.1%</span></div>
+          <div class="bar" style="height:10%; background:#f44336;"><span class="bar-label">&gt;60 min</span><span class="bar-val">4.8%</span></div>
         </div>
-        <p style="font-size:0.8rem; color:#64748b;">Long tail of severe delays &rarr; RMSE penalizes those outliers.</p>
       </div>
-      <div class="card anim anim-delay-2">
-        <h3>Class Balance (&ge;6 min)</h3>
-        <div style="display:flex; align-items:center; gap:12px; margin:8px 0;">
-          <div style="flex:1; height:40px; border-radius:6px; overflow:hidden; display:flex;">
-            <div style="flex:57.68; background:linear-gradient(#34d399,#1a3f2e); display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:600; color:#34d399;">57.7% on-time</div>
-            <div style="flex:42.32; background:linear-gradient(#f87171,#3f1a1a); display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:600; color:#f87171;">42.3% delayed</div>
-          </div>
+      <div class="box">
+        <h3>Class Balance (&ge;6 min threshold)</h3>
+        <div style="display:flex; height:30px; border-radius:3px; overflow:hidden; margin:8px 0;">
+          <div style="flex:57.68; background:#4CAF50; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:600; color:#fff;">57.7% on-time</div>
+          <div style="flex:42.32; background:#f44336; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:600; color:#fff;">42.3% delayed</div>
         </div>
-        <p>Imbalance ratio 1.36:1 &mdash; manageable. But accuracy alone is misleading (always on-time = 57.7%).</p>
+        <p>Imbalance ratio 1.36:1 &mdash; manageable. But always predicting "on-time" achieves 57.7% accuracy, so F1/ROC-AUC are more meaningful.</p>
       </div>
-      <div class="card anim anim-delay-3">
+      <div class="box">
         <h3>Weather Correlations</h3>
-        <p>All Pearson r &lt; 0.15.</p>
-        <div style="margin-top:6px;">
-          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b;"><span>temperature_2m</span><span>r = 0.137</span></div>
-          <div class="corr-bar" style="width:27%;"></div>
-          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b; margin-top:6px;"><span>windgusts_10m</span><span>r = 0.008</span></div>
-          <div class="corr-bar" style="width:5%;"></div>
-        </div>
-        <p style="margin-top:8px; font-size:0.85rem;"><strong>But</strong> effects are non-linear. Precipitation bin analysis shows a clear step function.</p>
+        <p>All Pearson r values &lt; 0.15. Strongest: temperature (r=0.137).</p>
+        <div class="corr-row"><span style="width:120px;">temperature_2m</span><div class="corr-bar" style="width:80px;"></div><span>r = 0.137</span></div>
+        <div class="corr-row"><span style="width:120px;">windgusts_10m</span><div class="corr-bar" style="width:15px;"></div><span>r = 0.008</span></div>
+        <div class="corr-row"><span style="width:120px;">precipitation</span><div class="corr-bar" style="width:12px;"></div><span>r = 0.006</span></div>
+        <p style="margin-top:4px;">Weak linear correlations, but effects are non-linear &mdash; tree models will capture this.</p>
       </div>
-      <div class="card anim anim-delay-4">
-        <h3>Precipitation Effect</h3>
-        <p>Delay rate jumps from 41.6% (dry) to ~44.5% when wet. H1 supported.</p>
-        <div style="margin-top:6px;">
-          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b;"><span>Dry (0 mm)</span><span>41.6%</span></div>
-          <div class="corr-bar" style="width:83%;"></div>
-          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b; margin-top:4px;"><span>Light (&lt;0.5 mm)</span><span>45.0%</span></div>
-          <div class="corr-bar" style="width:90%;"></div>
-          <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b; margin-top:4px;"><span>Heavy (&gt;2 mm)</span><span>44.4%</span></div>
-          <div class="corr-bar" style="width:89%;"></div>
-        </div>
-        <p style="font-size:0.8rem; color:#64748b; margin-top:6px;">&rArr; Tree-based models (RF, XGBoost) capture these step functions naturally.</p>
+      <div class="box">
+        <h3>Precipitation Effect (H1)</h3>
+        <p>Delay rate rises from 41.6% (dry) to ~44.5% when any precipitation occurs.</p>
+        <div class="corr-row"><span style="width:100px;">Dry (0 mm)</span><div class="corr-bar" style="width:83px;"></div><span>41.6%</span></div>
+        <div class="corr-row"><span style="width:100px;">Light (&lt;0.5 mm)</span><div class="corr-bar" style="width:90px;"></div><span>45.0%</span></div>
+        <div class="corr-row"><span style="width:100px;">Heavy (&gt;2 mm)</span><div class="corr-bar" style="width:89px;"></div><span>44.4%</span></div>
+        <p style="margin-top:4px;"><strong>H1 supported:</strong> precipitation increases delay probability. H2 (wind gusts) also weakly supported.</p>
       </div>
     </div>
   </div>
   <span class="slide-number">5 / 9</span>
 </div>
 
-<!-- ====== SLIDE 6: BASELINES & METRIC (~1 min) ====== -->
+<!-- SLIDE 6: BASELINES & METRICS -->
 <div class="slide">
   <div class="slide-inner">
-    <h2 class="anim anim-left">5 &mdash; Baselines &amp; Metrics</h2>
-    <p class="anim anim-delay-1" style="color:#94a3b8; margin-bottom:0.5rem;">We must beat naive baselines before introducing advanced models.</p>
-    <div class="grid-2" style="margin-top:0.25rem;">
-      <div class="card anim anim-delay-1" style="border-top:3px solid #60a5fa;">
+    <h2>5. Baselines &amp; Metrics</h2>
+    <p>Every model must beat a naive baseline before we consider it useful.</p>
+    <div class="grid-2" style="margin-top:0.3rem;">
+      <div class="box">
         <h3>Classification</h3>
-        <div style="background:#0f172a; border-radius:8px; padding:12px; margin:8px 0;">
-          <p style="margin:0; font-size:0.9rem;"><strong>Naive baseline:</strong> Always predict "on-time" &rarr; <strong>57.7% accuracy</strong></p>
+        <div style="background:#f0f0f0; padding:8px 12px; margin:6px 0; border-radius:3px;">
+          <strong>Naive baseline:</strong> Always predict "on-time" &rarr; <strong>57.7% accuracy</strong>
         </div>
-        <p><strong>Primary metric: F1 &amp; ROC-AUC.</strong> Accuracy is misleading at 57.7% baseline. F1 balances precision and recall; ROC-AUC is threshold-independent.</p>
-        <p style="font-size:0.8rem; color:#64748b; margin-top:4px;">Why F1 over accuracy? Under 42.3% positive rate, a model scoring 60% accuracy is barely above naive &mdash; F1 reveals true performance.</p>
+        <p><strong>Primary metrics: F1-score and ROC-AUC.</strong></p>
+        <p>Accuracy is misleading here. A model scoring 60% accuracy is barely above the naive baseline. F1 balances precision and recall; ROC-AUC evaluates performance across all thresholds.</p>
       </div>
-      <div class="card anim anim-delay-2" style="border-top:3px solid #a78bfa;">
+      <div class="box">
         <h3>Regression</h3>
-        <div style="background:#0f172a; border-radius:8px; padding:12px; margin:8px 0;">
-          <p style="margin:0; font-size:0.9rem;"><strong>Naive baseline:</strong> Always predict mean delay (10.57 min) &rarr; <strong>MAE ~13.5 min</strong></p>
+        <div style="background:#f0f0f0; padding:8px 12px; margin:6px 0; border-radius:3px;">
+          <strong>Naive baseline:</strong> Always predict mean delay (10.57 min) &rarr; <strong>MAE ~13.5 min</strong>
         </div>
-        <p><strong>Primary: MAE &amp; RMSE.</strong> MAE is interpretable in minutes. RMSE penalizes large errors (severe delays). R&sup2; as secondary.</p>
-        <p style="font-size:0.8rem; color:#64748b; margin-top:4px;">Why both? A model with MAE 8 min but RMSE 25 min is good on average but fails on severe delays. RMSE catches this.</p>
+        <p><strong>Primary metrics: MAE and RMSE.</strong></p>
+        <p>MAE is interpretable in minutes for passengers. RMSE penalizes large errors (severe delays that most affect operations). R&sup2; as secondary.</p>
       </div>
     </div>
-    <div class="highlight-box anim anim-delay-3">
-      <p><strong>Evaluation protocol:</strong> Time-based split (chronological, no shuffle) &mdash; prevents temporal leakage. Ablation study: same algorithm &plusmn; weather features to answer RQ2.</p>
+    <div class="highlight">
+      <strong>Evaluation protocol:</strong> Time-based (chronological) train/test split &mdash; no random shuffle, to prevent temporal leakage. <strong>Ablation study:</strong> same algorithm trained with and without weather features to directly answer RQ2 (does weather improve prediction?).
     </div>
   </div>
   <span class="slide-number">6 / 9</span>
 </div>
 
-<!-- ====== SLIDE 7: DESIGN DECISIONS CONDENSED (~30s) ====== -->
+<!-- SLIDE 7: DESIGN DECISIONS -->
 <div class="slide">
   <div class="slide-inner">
-    <h2 class="anim anim-left">Key Design Decisions</h2>
-    <div class="grid-3" style="margin-top:1rem;">
-      <div class="card anim anim-delay-1">
-        <div class="num" style="font-size:1.3rem;">6 min</div>
+    <h2>Key Design Decisions</h2>
+    <div class="grid-3">
+      <div class="box">
+        <p style="font-size:1.3rem; font-weight:700; color:#1a3a5c;">6 min</p>
         <span class="label">Delay threshold</span>
-        <p>Aligned with DB's "significant delay." 5 min too noisy; 15 min too few positives.</p>
+        <p>Aligned with DB's "significant delay." 5 min is too noisy (routine variation), 15 min yields too few positive cases.</p>
       </div>
-      <div class="card anim anim-delay-2">
-        <div class="num" style="font-size:1.3rem;">Time split</div>
+      <div class="box">
+        <p style="font-size:1.3rem; font-weight:700; color:#1a3a5c;">Time split</p>
         <span class="label">Train/test split</span>
-        <p>Not random &mdash; random leaks future into past. Chronological split reflects real deployment.</p>
+        <p>Random split leaks future data into training. Chronological split reflects real deployment: predict future from past.</p>
       </div>
-      <div class="card anim anim-delay-3">
-        <div class="num" style="font-size:1.3rem;">July only</div>
-        <span class="label">Scope</span>
-        <p>Proof-of-concept shard for fast iteration. Pipeline parameterized for any month.</p>
+      <div class="box">
+        <p style="font-size:1.3rem; font-weight:700; color:#1a3a5c;">July only</p>
+        <span class="label">Project scope</span>
+        <p>Single-month proof-of-concept for fast iteration. Pipeline is parameterized by date &mdash; extensible to any month.</p>
       </div>
-      <div class="card anim anim-delay-4">
-        <div class="num" style="font-size:1.3rem;">ICE only</div>
-        <span class="label">Train type</span>
-        <p>High-profile long-distance. Removing other types avoids confounding from different operational profiles.</p>
+      <div class="box">
+        <p style="font-size:1.3rem; font-weight:700; color:#1a3a5c;">ICE only</p>
+        <span class="label">Train type filter</span>
+        <p>ICE is high-profile long-distance. Removing other train types avoids confounding from different operational profiles.</p>
       </div>
-      <div class="card anim anim-delay-5">
-        <div class="num" style="font-size:1.3rem;">Planned</div>
-        <span class="label">Time used for merge</span>
-        <p><code class="code-line">departure_planned_time</code> (not actual) to avoid leakage into features.</p>
+      <div class="box">
+        <p style="font-size:1.3rem; font-weight:700; color:#1a3a5c;">Planned time</p>
+        <span class="label">Merge key</span>
+        <p><code>departure_planned_time</code> (not actual) used for weather join. Actual times encode the delay &mdash; that would leak the target.</p>
       </div>
-      <div class="card anim anim-delay-6">
-        <div class="num" style="font-size:1.3rem;">Left join</div>
+      <div class="box">
+        <p style="font-size:1.3rem; font-weight:700; color:#1a3a5c;">LEFT JOIN</p>
         <span class="label">Merge type</span>
-        <p>Preserves all ICE rows. Inner join would silently drop 14K rows without weather.</p>
+        <p>Preserves all 146K ICE rows. An inner join would silently drop 14K rows without weather, hiding data quality issues.</p>
       </div>
     </div>
   </div>
   <span class="slide-number">7 / 9</span>
 </div>
 
-<!-- ====== SLIDE 8: DIRECTION (~1 min) ====== -->
+<!-- SLIDE 8: DIRECTION -->
 <div class="slide">
   <div class="slide-inner">
-    <h2 class="anim anim-left">6 &mdash; Direction</h2>
-    <div class="grid-2" style="margin-top:0.5rem;">
-      <div class="card anim anim-delay-1">
-        <h3>Immediate (Notebooks 06&ndash;07)</h3>
+    <h2>6. Direction</h2>
+    <div class="grid-2">
+      <div class="box">
+        <h3>Immediate (Notebooks 06-07)</h3>
         <ul>
-          <li>Feature engineering: encode categoricals, drop leakage, create <code class="code-line">is_delayed</code></li>
+          <li>Feature engineering: encode categoricals (station, train), drop leakage and redundant columns</li>
+          <li>Create <code>is_delayed</code> target (delay >= 6 min)</li>
           <li>Time-based train/test split</li>
-          <li><strong>Baseline ML:</strong> Logistic Regression, Decision Tree, Linear Regression</li>
-          <li>Compare against naive baselines</li>
+          <li><strong>Baseline ML models:</strong> Logistic Regression, Decision Tree, Linear Regression</li>
+          <li>Compare results against naive baselines</li>
         </ul>
       </div>
-      <div class="card anim anim-delay-2">
-        <h3>Next (Notebooks 08&ndash;10)</h3>
+      <div class="box">
+        <h3>Next (Notebooks 08-10)</h3>
         <ul>
           <li><strong>Advanced models:</strong> Random Forest, XGBoost</li>
-          <li><strong>Ablation study</strong> (RQ2): same model with vs without weather</li>
+          <li><strong>Ablation study (RQ2):</strong> identical model with vs without weather features</li>
           <li>Hyperparameter tuning via cross-validation</li>
-          <li><strong>SHAP</strong> feature importance &rarr; answers RQ3</li>
+          <li><strong>SHAP feature importance (RQ3):</strong> identify which weather variables matter most</li>
         </ul>
       </div>
     </div>
-    <div class="anim anim-delay-3" style="margin-top:0.75rem; background:#1e293b; border-radius:12px; padding:16px; border:1px solid #334155;">
-      <h3>Modeling Strategy</h3>
-      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
-        <span class="badge badge-blue">Operational-only &rarr; RQ1</span>
-        <span class="badge badge-purple">Full (op + weather) &rarr; RQ2</span>
-        <span class="badge badge-green">Ablation &rarr; weather contribution</span>
-        <span class="badge badge-yellow">SHAP &rarr; RQ3</span>
-      </div>
-      <p style="font-size:0.8rem; color:#64748b; margin-top:8px;">Three hypotheses: H1 (precipitation &rarr; delay) supported in EDA. H2 (wind gusts) supported weakly. H3 (weather improves prediction) to test via ablation.</p>
+    <div class="highlight" style="margin-top:0.5rem;">
+      <strong>Modeling strategy:</strong>
+      <span class="tag">Operational-only &rarr; RQ1</span>
+      <span class="tag">Full model (op + weather) &rarr; RQ2</span>
+      <span class="tag">Ablation &rarr; isolates weather's contribution</span>
+      <span class="tag">SHAP &rarr; RQ3</span>
+      <br>
+      <strong>Hypothesis status:</strong> H1 (precipitation &rarr; delay) &mdash; supported by EDA. H2 (wind gusts &rarr; delay magnitude) &mdash; weakly supported. H3 (weather improves prediction) &mdash; to be tested via ablation.
     </div>
   </div>
   <span class="slide-number">8 / 9</span>
 </div>
 
-<!-- ====== SLIDE 9: CODE REVIEW (~2 min) ====== -->
+<!-- SLIDE 9: CODE REVIEW -->
 <div class="slide">
   <div class="slide-inner">
-    <h2 class="anim anim-left">7 &mdash; Code Review</h2>
-    <p class="anim anim-delay-1" style="color:#94a3b8; margin-bottom:0.5rem;">How the code is structured and what makes it special.</p>
-    <div class="grid-2" style="margin-top:0.25rem;">
-      <div class="card anim anim-delay-1">
+    <h2>7. Code Review</h2>
+    <div class="grid-2">
+      <div class="box">
         <h3>Pipeline Architecture</h3>
-        <p>5 sequential notebooks, each outputs a Parquet file consumed by the next:</p>
-        <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:8px;">
-          <span class="badge badge-blue">01 Define</span>
-          <span class="badge badge-green">02 Acquire</span>
-          <span class="badge badge-yellow">03 Clean</span>
-          <span class="badge badge-purple">04 Integrate</span>
-          <span class="badge badge-red">05 Explore</span>
-        </div>
-        <p style="margin-top:8px;">Each notebook reads config from <code class="code-line">data/reference/*.json</code> and writes a report JSON on completion. No hardcoded paths or manual steps.</p>
+        <p>Five sequential Jupyter notebooks, each outputs a Parquet file consumed by the next:</p>
+        <p style="margin:6px 0;">
+          <span class="tag">01 Define</span> &rarr;
+          <span class="tag">02 Acquire</span> &rarr;
+          <span class="tag">03 Clean</span> &rarr;
+          <span class="tag">04 Integrate</span> &rarr;
+          <span class="tag">05 Explore</span>
+        </p>
+        <p>Each notebook loads configuration from <code>data/reference/*.json</code> and writes a structured JSON report upon completion. No hardcoded paths, no manual steps.</p>
       </div>
-      <div class="card anim anim-delay-2">
-        <h3>What's Special</h3>
+      <div class="box">
+        <h3>What Makes It Special</h3>
         <ul>
-          <li><strong>Config-driven:</strong> 21 JSON files define configs, data dictionaries, merge strategies, and reports per notebook &mdash; full audit trail without a database.</li>
-          <li><strong>Streaming Parquet:</strong> Full DB is 54.8 GB. Notebooks read in 100K-row chunks via PyArrow, filter ICE, and write a 5.2 MB subset.</li>
-          <li><strong>Auto-generated reports:</strong> Each notebook writes a structured JSON summary (cleaning stats, merge validation, EDA findings) &rarr; reproducible by re-running.</li>
-          <li><strong>Separate presentation:</strong> <code class="code-line">presentation.html</code> lives in its own repo, decoupled from notebooks &mdash; enables independent deployment (Netlify).</li>
+          <li><strong>Config-driven:</strong> 21 JSON files define data dictionaries, merge strategies, cleaning rules, and per-notebook reports &mdash; full audit trail without a database.</li>
+          <li><strong>Streaming Parquet:</strong> The full DB is 54.8 GB. Notebooks read in 100K-row chunks via PyArrow, filter to ICE only, and output a 5.2 MB subset.</li>
+          <li><strong>Auto-generated reports:</strong> Every notebook writes a structured JSON summary (cleaning stats, merge validation, EDA findings). Rerun any notebook to regenerate.</li>
+          <li><strong>Decoupled presentation:</strong> Slides are a standalone HTML file in a separate repository, deployable via Netlify without touching the analysis pipeline.</li>
         </ul>
       </div>
     </div>
@@ -491,31 +386,13 @@
   const container = document.getElementById('slidesContainer');
   const slides = document.querySelectorAll('.slide');
   const indicator = document.getElementById('slideIndicator');
-  const progress = document.getElementById('progressBar');
   let current = 0;
-  let isAnimating = false;
 
   function goTo(index) {
-    if (isAnimating) return;
     if (index < 0 || index >= slides.length) return;
-    isAnimating = true;
     current = index;
     container.style.transform = 'translateX(' + (-current * 100) + 'vw)';
-    progress.style.width = ((current + 1) / slides.length * 100) + '%';
-    animateSlide(current);
     indicator.textContent = 'Slide ' + (current + 1) + ' of ' + slides.length;
-    setTimeout(() => { isAnimating = false; }, 600);
-  }
-
-  function animateSlide(index) {
-    const slide = slides[index];
-    const anims = slide.querySelectorAll('.anim, .anim-scale, .anim-left');
-    anims.forEach(el => el.classList.remove('active'));
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        anims.forEach(el => el.classList.add('active'));
-      });
-    });
   }
 
   document.addEventListener('keydown', (e) => {
@@ -523,33 +400,15 @@
       e.preventDefault(); goTo(current + 1);
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault(); goTo(current - 1);
-    } else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
-    else if (e.key === 'End') { e.preventDefault(); goTo(slides.length - 1); }
+    }
   });
-
-  let touchStartX = 0;
-  document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
-  document.addEventListener('touchend', (e) => {
-    const diff = touchStartX - e.changedTouches[0].screenX;
-    if (Math.abs(diff) > 50) { if (diff > 0) goTo(current + 1); else goTo(current - 1); }
-  });
-
-  let wheelTimeout = false;
-  document.addEventListener('wheel', (e) => {
-    if (wheelTimeout) return; wheelTimeout = true;
-    if (e.deltaY > 0) goTo(current + 1); else goTo(current - 1);
-    setTimeout(() => { wheelTimeout = false; }, 800);
-  }, { passive: true });
 
   document.addEventListener('click', (e) => {
     if (e.target.closest('.nav-hint') || e.target.closest('.slide-number')) return;
-    const rect = document.body.getBoundingClientRect();
-    if (e.clientX > rect.width / 2) goTo(current + 1);
+    if (e.clientX > window.innerWidth / 2) goTo(current + 1);
     else goTo(current - 1);
   });
 
-  progress.style.width = (1 / slides.length * 100) + '%';
-  animateSlide(0);
   indicator.textContent = 'Slide 1 of ' + slides.length;
 </script>
 
